@@ -1,0 +1,32 @@
+# Build
+/target/
+/out/
+
+# Dependencies
+frontend/node_modules/
+
+# Build output
+frontend/dist/
+
+# Local uploads & logs
+uploads/
+logs/
+
+# Environment & secrets
+.env
+.env.local
+*.env
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven wrapper logs
+.mvn/wrapper/maven-wrapper.jar
