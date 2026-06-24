@@ -74,6 +74,35 @@ export default function UserDashboard() {
           ))}
         </div>
 
+        {/* Getting started guide */}
+        <motion.div {...fadeUp} className="mb-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-slate-950">Getting Started</h2>
+              <p className="mt-0.5 text-sm text-slate-500">Three quick steps to your next ride.</p>
+            </div>
+            <Link to="/help" className="hidden items-center gap-1 text-sm font-semibold text-teal-700 hover:text-teal-900 sm:flex">
+              Help Center <FiArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              { icon: <FiSearch />,      title: 'Find a vehicle',  text: 'Browse and filter verified vehicles by type, price, and location.' },
+              { icon: <FiCheckCircle />, title: 'Book instantly',  text: 'Reserve online with clear pricing and instant confirmation.' },
+              { icon: <FiKey />,         title: 'Pick up & drive', text: 'Get pickup details and your rental agreement, then hit the road.' },
+            ].map((step, index) => (
+              <div key={step.title} className="rounded-xl border border-slate-100 bg-slate-50/60 p-4">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-9 w-9 place-items-center rounded-xl bg-teal-600 text-white">{step.icon}</span>
+                  <span className="grid h-7 w-7 place-items-center rounded-lg bg-white text-sm font-black text-teal-700 ring-1 ring-teal-100">{index + 1}</span>
+                </div>
+                <h3 className="mt-3 text-sm font-bold text-slate-950">{step.title}</h3>
+                <p className="mt-1 text-xs leading-relaxed text-slate-500">{step.text}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
         {/* Recent rentals + Featured vehicles */}
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <section>
