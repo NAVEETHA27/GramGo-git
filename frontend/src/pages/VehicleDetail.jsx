@@ -68,7 +68,7 @@ export default function VehicleDetail() {
     </div>
   );
   if (!data) return (
-    <div className="text-center py-20 text-blue-900">
+    <div className="text-center py-20 text-slate-900">
       <div className="text-5xl mb-4">🚗</div>
       <h2 className="text-2xl font-bold">Vehicle not found</h2>
       <Link to="/events" className="btn-primary inline-block mt-4">Browse Vehicles</Link>
@@ -92,14 +92,14 @@ export default function VehicleDetail() {
   const seatsCount  = seatsTag ? seatsTag.replace('SEATS_', '') + ' seats' : '';
 
   return (
-    <div style={{ background: '#F0F4FF', minHeight: '100vh' }}>
+    <div style={{ background: '#F6F8FB', minHeight: '100vh' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid lg:grid-cols-3 gap-10">
 
           {/* Left */}
           <div className="lg:col-span-2 space-y-7">
             {/* Banner */}
-            <div className="rounded-3xl overflow-hidden h-72 md:h-96 bg-gradient-to-br from-blue-100 to-indigo-100 shadow-card">
+            <div className="rounded-3xl overflow-hidden h-72 md:h-96 bg-gradient-to-br from-teal-100 to-indigo-100 shadow-card">
               {vehicle.eventBanner
                 ? <img src={vehicle.eventBanner} alt={vehicle.eventName} className="w-full h-full object-cover" />
                 : <div className="w-full h-full flex items-center justify-center text-9xl opacity-30">🚗</div>}
@@ -112,22 +112,22 @@ export default function VehicleDetail() {
                 {vehicle.hasCertificate && <span className="badge badge-green"><FiShield className="inline w-3 h-3 mr-0.5" />Insured</span>}
                 {vehicle.priority === 'HIGH' && <span className="badge badge-red">🔥 Premium</span>}
               </div>
-              <h1 className="text-3xl font-extrabold text-blue-900 mb-5" style={{ fontFamily: 'Space Grotesk,sans-serif' }}>
+              <h1 className="text-3xl font-extrabold text-slate-900 mb-5" style={{ fontFamily: 'Space Grotesk,sans-serif' }}>
                 {vehicle.eventName}
               </h1>
 
               {/* Specs grid */}
               <div className="grid sm:grid-cols-2 gap-3">
                 {[
-                  brand && { icon: <MdDirectionsCar className="text-blue-500" />, label: `Brand: ${brand}` },
+                  brand && { icon: <MdDirectionsCar className="text-teal-500" />, label: `Brand: ${brand}` },
                   model && { icon: <MdDirectionsCar className="text-indigo-400" />, label: `Model: ${model}` },
                   vehicle.location && { icon: <FiMapPin className="text-red-400" />, label: vehicle.venueName || vehicle.location },
-                  { icon: <FiUsers className="text-blue-500" />, label: `${vehicle.availableSeats} / ${vehicle.totalSeats} units available` },
-                  fuelType && { icon: <FiInfo className="text-blue-400" />, label: `Fuel: ${fuelType}` },
-                  transmission && { icon: <FiKey className="text-blue-400" />, label: `Transmission: ${transmission}` },
+                  { icon: <FiUsers className="text-teal-500" />, label: `${vehicle.availableSeats} / ${vehicle.totalSeats} units available` },
+                  fuelType && { icon: <FiInfo className="text-teal-400" />, label: `Fuel: ${fuelType}` },
+                  transmission && { icon: <FiKey className="text-teal-400" />, label: `Transmission: ${transmission}` },
                   seatsCount && { icon: <FiUsers className="text-teal-400" />, label: seatsCount },
                 ].filter(Boolean).map((item, i) => (
-                  <div key={i} className="flex items-start gap-3 bg-white rounded-2xl px-4 py-3 border border-blue-100">
+                  <div key={i} className="flex items-start gap-3 bg-white rounded-2xl px-4 py-3 border border-teal-100">
                     <span className="mt-0.5 text-lg">{item.icon}</span>
                     <span className="text-sm text-gray-700">{item.label}</span>
                   </div>
@@ -137,23 +137,23 @@ export default function VehicleDetail() {
 
             {/* Description */}
             {vehicle.description && (
-              <div className="bg-white rounded-2xl p-6 border border-blue-100 shadow-card">
-                <h2 className="text-lg font-bold text-blue-900 mb-3">About This Vehicle</h2>
+              <div className="bg-white rounded-2xl p-6 border border-teal-100 shadow-card">
+                <h2 className="text-lg font-bold text-slate-900 mb-3">About This Vehicle</h2>
                 <p className="text-gray-600 leading-relaxed text-sm whitespace-pre-line">{vehicle.description}</p>
               </div>
             )}
 
             {/* Owner info */}
             {vehicle.organizer && (
-              <div className="bg-white rounded-2xl p-5 flex items-center gap-4 border border-blue-100 shadow-card">
+              <div className="bg-white rounded-2xl p-5 flex items-center gap-4 border border-teal-100 shadow-card">
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xl overflow-hidden"
-                  style={{ background: 'linear-gradient(135deg,#1565C0,#D32F2F)' }}>
+                  style={{ background: 'linear-gradient(135deg,#0F766E,#D32F2F)' }}>
                   {vehicle.organizer.organizationLogo
                     ? <img src={vehicle.organizer.organizationLogo} alt="" className="w-full h-full object-cover" />
                     : vehicle.organizer.organizerName?.charAt(0)}
                 </div>
                 <div>
-                  <p className="font-bold text-blue-900">{vehicle.organizer.organizerName}</p>
+                  <p className="font-bold text-slate-900">{vehicle.organizer.organizerName}</p>
                   <p className="text-sm text-gray-500">{vehicle.organizer.organizationName}</p>
                 </div>
               </div>
@@ -161,7 +161,7 @@ export default function VehicleDetail() {
 
             {vehicle.googleMapsUrl && (
               <a href={vehicle.googleMapsUrl} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 text-sm font-medium">
+                className="flex items-center gap-2 text-teal-600 hover:text-teal-800 text-sm font-medium">
                 <FiExternalLink /> View pickup location on Google Maps
               </a>
             )}
@@ -169,12 +169,12 @@ export default function VehicleDetail() {
 
           {/* Right — booking card */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-3xl p-6 sticky top-24 space-y-5 border border-blue-100 shadow-blue">
+            <div className="bg-white rounded-3xl p-6 sticky top-24 space-y-5 border border-teal-100 shadow-blue">
               <div>
                 <p className="text-xs text-gray-500 mb-1 font-medium">Rental Price</p>
                 {isFree
                   ? <p className="text-3xl font-extrabold text-green-600">Free</p>
-                  : <p className="text-3xl font-extrabold text-blue-900">
+                  : <p className="text-3xl font-extrabold text-slate-900">
                       Rs.{pricePerDay.toLocaleString()}
                       <span className="text-sm font-normal text-gray-400"> / day</span>
                     </p>
@@ -183,18 +183,18 @@ export default function VehicleDetail() {
 
               {canRent && (
                 <div>
-                  <p className="text-sm font-semibold text-blue-900 mb-3">Number of Days</p>
+                  <p className="text-sm font-semibold text-slate-900 mb-3">Number of Days</p>
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setQty((q) => Math.max(1, q - 1))}
-                      className="w-10 h-10 rounded-xl border border-blue-200 flex items-center justify-center hover:bg-blue-50 transition-colors text-blue-700"
+                      className="w-10 h-10 rounded-xl border border-teal-200 flex items-center justify-center hover:bg-teal-50 transition-colors text-teal-700"
                     >
                       <FiMinus />
                     </button>
-                    <span className="text-xl font-bold text-blue-900 w-8 text-center">{qty}</span>
+                    <span className="text-xl font-bold text-slate-900 w-8 text-center">{qty}</span>
                     <button
                       onClick={() => setQty((q) => Math.min(30, q + 1))}
-                      className="w-10 h-10 rounded-xl border border-blue-200 flex items-center justify-center hover:bg-blue-50 transition-colors text-blue-700"
+                      className="w-10 h-10 rounded-xl border border-teal-200 flex items-center justify-center hover:bg-teal-50 transition-colors text-teal-700"
                     >
                       <FiPlus />
                     </button>
@@ -203,9 +203,9 @@ export default function VehicleDetail() {
               )}
 
               {!isFree && canRent && (
-                <div className="flex items-center justify-between pt-3 border-t border-blue-100">
+                <div className="flex items-center justify-between pt-3 border-t border-teal-100">
                   <span className="font-semibold text-gray-700">Total ({qty} day{qty > 1 ? 's' : ''})</span>
-                  <span className="text-2xl font-extrabold text-blue-900">Rs.{totalPrice.toLocaleString()}</span>
+                  <span className="text-2xl font-extrabold text-slate-900">Rs.{totalPrice.toLocaleString()}</span>
                 </div>
               )}
 
@@ -231,7 +231,7 @@ export default function VehicleDetail() {
 
               <button
                 onClick={() => navigator.clipboard.writeText(window.location.href).then(() => toast.success('Link copied!'))}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl border border-blue-200 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl border border-teal-200 text-sm font-medium text-teal-600 hover:bg-teal-50 transition-colors"
               >
                 <FiShare2 /> Share This Vehicle
               </button>

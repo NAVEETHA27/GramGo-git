@@ -4,10 +4,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary:   { DEFAULT: '#1565C0', dark: '#0D47A1', light: '#1976D2', 50: '#E3F2FD', 100: '#BBDEFB' },
-        accent:    { DEFAULT: '#D32F2F', dark: '#B71C1C' },
-        secondary: { DEFAULT: '#D32F2F' },
-        dark:      { bg: '#F0F4FF', card: '#ffffff', border: '#BBDEFB', muted: '#EEF2FF' },
+        primary:   { DEFAULT: '#0F766E', dark: '#115E59', light: '#14B8A6', 50: '#F0FDFA', 100: '#CCFBF1' },
+        accent:    { DEFAULT: '#F59E0B', dark: '#B45309' },
+        secondary: { DEFAULT: '#F59E0B' },
+        dark:      { bg: '#F6F8FB', card: '#ffffff', border: '#E2E8F0', muted: '#F1F5F9' },
       },
       fontFamily: {
         sans:    ['Inter', 'system-ui', 'sans-serif'],
@@ -28,9 +28,11 @@ export default {
         shimmer: { from: { backgroundPosition: '-200% 0' }, to: { backgroundPosition: '200% 0' } },
       },
       boxShadow: {
-        'blue':    '0 4px 20px rgba(21,101,192,0.25)',
-        'blue-lg': '0 8px 36px rgba(21,101,192,0.35)',
-        'card':    '0 2px 12px rgba(21,101,192,0.08)',
+        'blue':    '0 4px 20px rgba(15,118,110,0.22)',
+        'blue-lg': '0 8px 36px rgba(15,118,110,0.32)',
+        'card':    '0 2px 12px rgba(15,23,42,0.06)',
+        'brand':   '0 4px 20px rgba(15,118,110,0.22)',
+        'brand-lg':'0 8px 36px rgba(15,118,110,0.32)',
       },
     },
   },

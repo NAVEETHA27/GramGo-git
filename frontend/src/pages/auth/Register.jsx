@@ -39,11 +39,11 @@ const orgSchema = yup.object({
 /* ─── theme tokens (same as Login) ───────────────────────── */
 const ROLE_THEME = {
   user: {
-    accent:'#1565C0', accentAlt:'#1976D2',
-    bg:'linear-gradient(135deg,#E3F2FD 0%,#F0F4FF 60%,#E8EEF9 100%)',
-    curtain:'linear-gradient(180deg,#1565C0,#0D47A1)',
-    cardBorder:'#BBDEFB', inputBg:'#F0F7FF', inputBorder:'#BBDEFB',
-    labelColor:'#1A237E', toggleBg:'#E3F2FD', toggleBorder:'#BBDEFB',
+    accent:'#0F766E', accentAlt:'#14B8A6',
+    bg:'linear-gradient(135deg,#F0FDFA 0%,#F6F8FB 60%,#E2E8F0 100%)',
+    curtain:'linear-gradient(180deg,#0F766E,#115E59)',
+    cardBorder:'#CCFBF1', inputBg:'#F0F7FF', inputBorder:'#CCFBF1',
+    labelColor:'#134E4A', toggleBg:'#F0FDFA', toggleBorder:'#CCFBF1',
     subtitleColor:'#546E7A',
     bubbleColors:['rgba(21,101,192,0.35)','rgba(25,118,210,0.28)','rgba(100,181,246,0.4)','rgba(13,71,161,0.32)','rgba(21,101,192,0.25)','rgba(66,165,245,0.3)'],
     orbLeft:'rgba(21,101,192,0.08)', orbRight:'rgba(187,222,251,0.5)',
@@ -83,7 +83,7 @@ const BUBBLE_POS = [
 const DEFAULT_MAP_CENTER = [20.5937, 78.9629];
 const locationMarker = L.divIcon({
   className: '',
-  html: '<div style="width:18px;height:18px;border-radius:50%;background:#1565C0;border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,.35)"></div>',
+  html: '<div style="width:18px;height:18px;border-radius:50%;background:#0F766E;border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,.35)"></div>',
   iconSize: [18, 18],
   iconAnchor: [9, 9],
 });
@@ -152,7 +152,7 @@ const cardAnim = { initial:{ opacity:0, y:36, scale:0.96 }, animate:{ opacity:1,
 function Field({ label, error, icon, accent, children }) {
   return (
     <div>
-      <label className="block text-sm font-semibold mb-1.5" style={{ color: accent === '#1565C0' ? '#1A237E' : '#4A0000' }}>
+      <label className="block text-sm font-semibold mb-1.5" style={{ color: accent === '#0F766E' ? '#134E4A' : '#4A0000' }}>
         {label}
       </label>
       <div className="relative">
@@ -217,7 +217,7 @@ export default function Register() {
   const inputStyle = (hasErr) => ({
     width:'100%', paddingLeft:'2.75rem', paddingRight:'1rem',
     paddingTop:'0.75rem', paddingBottom:'0.75rem',
-    borderRadius:'0.75rem', fontSize:'0.875rem', color:'#1A237E',
+    borderRadius:'0.75rem', fontSize:'0.875rem', color:'#134E4A',
     background: t.inputBg,
     border:`1.5px solid ${hasErr ? '#EF5350' : t.inputBorder}`,
     outline:'none', transition:'all 0.2s ease',

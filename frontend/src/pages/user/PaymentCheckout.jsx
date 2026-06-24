@@ -68,7 +68,7 @@ function useCountdown(totalSeconds) {
 /* ─── Skeleton loader ─────────────────────────────────────── */
 function PageSkeleton() {
   return (
-    <div className="min-h-screen px-4 py-8" style={{background:'#F0F4FF'}}>
+    <div className="min-h-screen px-4 py-8" style={{background:'#F6F8FB'}}>
       <div className="max-w-5xl mx-auto">
         <div className="skeleton h-4 w-48 rounded-xl mb-8"/>
         <div className="skeleton h-2 w-full rounded-full mb-8"/>
@@ -102,16 +102,16 @@ function StepBar({ current = 1 }) {
               <motion.div
                 initial={{ scale: 0.8 }} animate={{ scale: 1 }}
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all ${
-                  done   ? 'bg-blue-600 border-blue-600 text-white' :
-                  active ? 'bg-white border-blue-600 text-blue-600' :
+                  done   ? 'bg-teal-600 border-teal-600 text-white' :
+                  active ? 'bg-white border-teal-600 text-teal-600' :
                            'bg-white border-gray-200 text-gray-400'
                 }`}>
                 {done ? <FiCheckCircle className="w-4 h-4"/> : i + 1}
               </motion.div>
-              <span className={`text-[10px] mt-1 font-semibold whitespace-nowrap ${active?'text-blue-600':done?'text-blue-500':'text-gray-400'}`}>{label}</span>
+              <span className={`text-[10px] mt-1 font-semibold whitespace-nowrap ${active?'text-teal-600':done?'text-teal-500':'text-gray-400'}`}>{label}</span>
             </div>
             {i < STEPS.length - 1 && (
-              <div className={`w-16 sm:w-24 h-0.5 mb-5 mx-1 transition-all ${done?'bg-blue-600':'bg-gray-200'}`}/>
+              <div className={`w-16 sm:w-24 h-0.5 mb-5 mx-1 transition-all ${done?'bg-teal-600':'bg-gray-200'}`}/>
             )}
           </div>
         );
@@ -127,7 +127,7 @@ function OrderSummary({ booking, expanded, setExpanded }) {
   const free = fees.base <= 0;
 
   return (
-    <div className="bg-white rounded-3xl overflow-hidden border border-blue-100"
+    <div className="bg-white rounded-3xl overflow-hidden border border-teal-100"
       style={{boxShadow:'0 8px 32px rgba(21,101,192,0.1)'}}>
 
       {/* Banner with overlay */}
@@ -143,7 +143,7 @@ function OrderSummary({ booking, expanded, setExpanded }) {
       ) : (
         <div className="px-6 pt-6">
           <span className="badge badge-blue text-[10px] mb-1 block w-fit">{ev.category||'EVENT'}</span>
-          <h2 className="text-blue-900 font-extrabold text-xl">{ev.eventName}</h2>
+          <h2 className="text-slate-900 font-extrabold text-xl">{ev.eventName}</h2>
         </div>
       )}
 
@@ -152,25 +152,25 @@ function OrderSummary({ booking, expanded, setExpanded }) {
         <div className="space-y-2 text-sm">
           {ev.venueName && (
             <div className="flex items-center gap-2 text-gray-600">
-              <span className="text-blue-400">📍</span> {ev.venueName || ev.location}
+              <span className="text-teal-400">📍</span> {ev.venueName || ev.location}
             </div>
           )}
           {ev.eventDate && (
             <div className="flex items-center gap-2 text-gray-600">
-              <span className="text-blue-400">📅</span>
+              <span className="text-teal-400">📅</span>
               {new Date(ev.eventDate).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}
               {ev.eventTime && ` · ${ev.eventTime}`}
             </div>
           )}
           <div className="flex items-center gap-2 text-gray-600">
-            <span className="text-blue-400">🚗</span> {booking?.quantity} day{booking?.quantity!==1?'s':''}
+            <span className="text-teal-400">🚗</span> {booking?.quantity} day{booking?.quantity!==1?'s':''}
           </div>
         </div>
 
         {/* Expandable ticket details */}
-        <div className="rounded-2xl border border-blue-100 overflow-hidden">
+        <div className="rounded-2xl border border-teal-100 overflow-hidden">
           <button type="button" onClick={() => setExpanded(!expanded)}
-            className="w-full flex items-center justify-between px-4 py-2.5 bg-blue-50 hover:bg-blue-100 transition-colors text-sm font-semibold text-blue-700">
+            className="w-full flex items-center justify-between px-4 py-2.5 bg-teal-50 hover:bg-teal-100 transition-colors text-sm font-semibold text-teal-700">
             <span>🚗 Rental Details</span>
             {expanded ? <FiChevronUp className="w-4 h-4"/> : <FiChevronDown className="w-4 h-4"/>}
           </button>
@@ -189,14 +189,14 @@ function OrderSummary({ booking, expanded, setExpanded }) {
         </div>
 
         {/* Price breakdown */}
-        <div className="rounded-2xl border border-blue-100 p-4 space-y-2.5 text-sm bg-blue-50/40">
-          <p className="font-bold text-blue-900 text-xs uppercase tracking-widest mb-3">Price Breakdown</p>
+        <div className="rounded-2xl border border-teal-100 p-4 space-y-2.5 text-sm bg-teal-50/40">
+          <p className="font-bold text-slate-900 text-xs uppercase tracking-widest mb-3">Price Breakdown</p>
           <SRow label={`Rental × ${booking?.quantity||1} day${(booking?.quantity||1)>1?'s':''}`} value={free?'Free':fmt(fees.base)}/>
           {!free && <>
             <SRow label="Platform fee (2%)" value={fmt(fees.platform)} hint/>
             <SRow label="GST (18% on fee)"  value={fmt(fees.gst)} hint/>
           </>}
-          <div className="border-t border-blue-200 pt-2.5 flex justify-between font-extrabold text-base text-blue-900">
+          <div className="border-t border-teal-200 pt-2.5 flex justify-between font-extrabold text-base text-slate-900">
             <span>Grand Total</span>
             <span className="text-lg">{free?'Free':fmt(fees.total)}</span>
           </div>
@@ -210,7 +210,7 @@ function SRow({ label, value, mono, hint }) {
   return (
     <div className="flex justify-between gap-4">
       <span className={hint?'text-gray-400':'text-gray-500'}>{label}</span>
-      <span className={`font-semibold text-right text-blue-900 truncate max-w-[55%] ${mono?'font-mono text-[11px] bg-blue-100 px-1.5 py-0.5 rounded':''}`}>{value||'—'}</span>
+      <span className={`font-semibold text-right text-slate-900 truncate max-w-[55%] ${mono?'font-mono text-[11px] bg-teal-100 px-1.5 py-0.5 rounded':''}`}>{value||'—'}</span>
     </div>
   );
 }
@@ -284,7 +284,7 @@ export default function PaymentCheckout() {
         order_id:    order.orderId,
         prefill: { name: user?.name||'', email: user?.email||'', contact: user?.phone||'' },
         notes:   { bookingId, userId: user?.id },
-        theme:   { color: '#1565C0' },
+        theme:   { color: '#0F766E' },
         handler: async (resp) => {
           setPS('PROCESSING');
           try {
@@ -335,13 +335,13 @@ export default function PaymentCheckout() {
   })();
 
   return (
-    <div className="min-h-screen px-4 py-8" style={{background:'#F0F4FF'}}>
+    <div className="min-h-screen px-4 py-8" style={{background:'#F6F8FB'}}>
       <div className="max-w-5xl mx-auto">
 
         {/* Back */}
         <motion.div initial={{opacity:0,x:-12}} animate={{opacity:1,x:0}} className="mb-5">
           <Link to={`/bookings/${bookingId}`}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors">
+            className="inline-flex items-center gap-2 text-sm font-semibold text-teal-600 hover:text-teal-800 transition-colors">
             <FiArrowLeft/> Back to booking
           </Link>
         </motion.div>
@@ -370,13 +370,13 @@ export default function PaymentCheckout() {
           <motion.div initial={{opacity:0,x:20}} animate={{opacity:1,x:0}} transition={{delay:0.1}} className="space-y-4">
 
             {/* Customer info */}
-            <div className="bg-white rounded-3xl border border-blue-100 p-5"
+            <div className="bg-white rounded-3xl border border-teal-100 p-5"
               style={{boxShadow:'0 4px 20px rgba(21,101,192,0.08)'}}>
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <span className="text-blue-600 text-sm">👤</span>
+                <div className="w-7 h-7 rounded-lg bg-teal-100 flex items-center justify-center">
+                  <span className="text-teal-600 text-sm">👤</span>
                 </div>
-                <h3 className="font-bold text-blue-900 text-sm">Customer Details</h3>
+                <h3 className="font-bold text-slate-900 text-sm">Customer Details</h3>
                 <span className="ml-auto">
                   {user?.emailVerified && <span className="inline-flex items-center gap-1 text-[10px] font-bold text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full"><MdVerified className="w-3 h-3"/> Verified</span>}
                 </span>
@@ -390,11 +390,11 @@ export default function PaymentCheckout() {
             </div>
 
             {/* Payment methods */}
-            <div className="bg-white rounded-3xl border border-blue-100 p-5"
+            <div className="bg-white rounded-3xl border border-teal-100 p-5"
               style={{boxShadow:'0 4px 20px rgba(21,101,192,0.08)'}}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-blue-900 text-sm">Payment Method</h3>
-                <div className="flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                <h3 className="font-bold text-slate-900 text-sm">Payment Method</h3>
+                <div className="flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200">
                   <FiLock className="w-3 h-3"/> Razorpay Secured
                 </div>
               </div>
@@ -404,20 +404,20 @@ export default function PaymentCheckout() {
                     onClick={() => setMethod(m.id)}
                     className={`relative flex items-center gap-2.5 p-3 rounded-2xl border text-left transition-all duration-200 ${
                       method===m.id
-                        ? 'border-transparent ring-2 ring-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-blue-200 hover:bg-blue-50/30'
+                        ? 'border-transparent ring-2 ring-teal-500 bg-teal-50'
+                        : 'border-gray-200 hover:border-teal-200 hover:bg-teal-50/30'
                     }`}>
                     <span className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-white"
                       style={{background: method===m.id ? m.color : '#E5E7EB', color: method===m.id ? '#fff' : '#9CA3AF'}}>
                       {m.icon}
                     </span>
                     <div className="min-w-0">
-                      <div className={`text-xs font-bold truncate ${method===m.id?'text-blue-800':'text-gray-700'}`}>{m.label}</div>
+                      <div className={`text-xs font-bold truncate ${method===m.id?'text-teal-800':'text-gray-700'}`}>{m.label}</div>
                       <div className="text-[10px] text-gray-400 truncate">{m.sub}</div>
                     </div>
                     {method===m.id && (
                       <motion.div initial={{scale:0}} animate={{scale:1}}
-                        className="absolute top-2 right-2 w-4 h-4 rounded-full bg-blue-600 flex items-center justify-center">
+                        className="absolute top-2 right-2 w-4 h-4 rounded-full bg-teal-600 flex items-center justify-center">
                         <FiCheckCircle className="w-3 h-3 text-white"/>
                       </motion.div>
                     )}
@@ -442,7 +442,7 @@ export default function PaymentCheckout() {
               whileHover={isPaying||alreadyConfirmed||isLoading ? {} : {scale:1.02, boxShadow:'0 12px 36px rgba(21,101,192,0.45)'}}
               whileTap={isPaying||alreadyConfirmed||isLoading ? {} : {scale:0.97}}
               className="w-full py-4 rounded-2xl text-white text-base font-bold flex items-center justify-center gap-3 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-              style={{background:'linear-gradient(135deg,#1565C0,#1976D2)', boxShadow:'0 6px 24px rgba(21,101,192,0.35)'}}>
+              style={{background:'linear-gradient(135deg,#0F766E,#14B8A6)', boxShadow:'0 6px 24px rgba(21,101,192,0.35)'}}>
               {isPaying
                 ? <><motion.div animate={{rotate:360}} transition={{repeat:Infinity,duration:0.75,ease:'linear'}}
                     className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"/>{btnLabel}</>
@@ -467,7 +467,7 @@ function IRow({label, value, mono}) {
   return (
     <div className="flex justify-between items-center gap-4 py-1 border-b border-gray-50 last:border-0">
       <span className="text-xs text-gray-400 flex-shrink-0">{label}</span>
-      <span className={`text-xs font-semibold text-blue-900 text-right truncate ${mono?'font-mono bg-blue-50 px-2 py-0.5 rounded':''}`}>{value||'—'}</span>
+      <span className={`text-xs font-semibold text-slate-900 text-right truncate ${mono?'font-mono bg-teal-50 px-2 py-0.5 rounded':''}`}>{value||'—'}</span>
     </div>
   );
 }
@@ -477,7 +477,7 @@ function PaymentSuccess({ booking, result, bookingId, navigate }) {
   const ev = booking?.event || {};
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{background:'linear-gradient(135deg,#E8F5E9 0%,#F0F4FF 100%)'}}>
+      style={{background:'linear-gradient(135deg,#E8F5E9 0%,#F6F8FB 100%)'}}>
       <motion.div initial={{opacity:0,scale:0.9,y:24}} animate={{opacity:1,scale:1,y:0}}
         transition={{duration:0.5,ease:[0.34,1.56,0.64,1]}}
         className="w-full max-w-md bg-white rounded-3xl overflow-hidden border border-green-100"
@@ -510,8 +510,8 @@ function PaymentSuccess({ booking, result, bookingId, navigate }) {
 
           {/* QR hint */}
           {booking?.qrCodePath && (
-            <div className="flex items-center gap-2 text-xs text-gray-500 bg-blue-50 rounded-xl px-4 py-2 mb-4">
-              <MdQrCode className="w-4 h-4 text-blue-500"/> QR ticket is ready — view your booking for the QR code.
+            <div className="flex items-center gap-2 text-xs text-gray-500 bg-teal-50 rounded-xl px-4 py-2 mb-4">
+              <MdQrCode className="w-4 h-4 text-teal-500"/> QR ticket is ready — view your booking for the QR code.
             </div>
           )}
 
@@ -547,7 +547,7 @@ function RRow({label, value, mono}) {
 function PaymentFailed({ error, bookingId, navigate, onRetry }) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{background:'linear-gradient(135deg,#FFF5F5 0%,#F0F4FF 100%)'}}>
+      style={{background:'linear-gradient(135deg,#FFF5F5 0%,#F6F8FB 100%)'}}>
       <motion.div initial={{opacity:0,scale:0.9,y:24}} animate={{opacity:1,scale:1,y:0}}
         transition={{duration:0.5,ease:[0.34,1.56,0.64,1]}}
         className="w-full max-w-sm bg-white rounded-3xl overflow-hidden border border-red-100"
@@ -589,7 +589,7 @@ function PaymentFailed({ error, bookingId, navigate, onRetry }) {
 function PaymentCancelled({ bookingId, navigate, onRetry }) {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12"
-      style={{background:'linear-gradient(135deg,#FFFDE7 0%,#F0F4FF 100%)'}}>
+      style={{background:'linear-gradient(135deg,#FFFDE7 0%,#F6F8FB 100%)'}}>
       <motion.div initial={{opacity:0,scale:0.9,y:24}} animate={{opacity:1,scale:1,y:0}}
         transition={{duration:0.5,ease:[0.34,1.56,0.64,1]}}
         className="w-full max-w-sm bg-white rounded-3xl overflow-hidden border border-yellow-100"

@@ -36,7 +36,7 @@ export default function Approvals() {
     APPROVED:            'bg-green-50  text-green-700  border-green-200',
     REJECTED:            'bg-red-50    text-red-600    border-red-200',
     PENDING_APPROVAL:    'bg-amber-50  text-amber-700  border-amber-200',
-    REQUEST_MODIFICATIONS:'bg-blue-50  text-blue-700   border-blue-200',
+    REQUEST_MODIFICATIONS:'bg-teal-50  text-teal-700   border-teal-200',
   };
 
   return (
@@ -130,7 +130,7 @@ export default function Approvals() {
                       </button>
                       <button
                         onClick={() => review(vehicle.id, 'REQUEST_MODIFICATIONS')}
-                        className="inline-flex items-center gap-1.5 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 transition hover:bg-blue-100"
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-teal-200 bg-teal-50 px-4 py-2 text-sm font-bold text-teal-700 transition hover:bg-teal-100"
                       >
                         <FiEdit className="h-3.5 w-3.5" /> Request Changes
                       </button>

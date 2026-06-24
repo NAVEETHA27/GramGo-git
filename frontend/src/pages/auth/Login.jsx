@@ -18,11 +18,11 @@ const schema = yup.object({
 /* ─── theme tokens ────────────────────────────────────────── */
 const T = {
   user: {
-    accent:'#1565C0', accentAlt:'#1976D2',
-    bg:'linear-gradient(135deg,#E3F2FD 0%,#F0F4FF 60%,#E8EEF9 100%)',
-    curtain:'linear-gradient(180deg,#1565C0,#0D47A1)',
-    cardBorder:'#BBDEFB', inputBg:'#F0F7FF', inputBorder:'#BBDEFB',
-    labelColor:'#1A237E', toggleBg:'#E3F2FD', toggleBorder:'#BBDEFB',
+    accent:'#0F766E', accentAlt:'#14B8A6',
+    bg:'linear-gradient(135deg,#F0FDFA 0%,#F6F8FB 60%,#E2E8F0 100%)',
+    curtain:'linear-gradient(180deg,#0F766E,#115E59)',
+    cardBorder:'#CCFBF1', inputBg:'#F0F7FF', inputBorder:'#CCFBF1',
+    labelColor:'#134E4A', toggleBg:'#F0FDFA', toggleBorder:'#CCFBF1',
     subtitleColor:'#546E7A',
     bubbles:['rgba(21,101,192,0.35)','rgba(25,118,210,0.28)','rgba(13,71,161,0.32)','rgba(100,181,246,0.4)','rgba(21,101,192,0.25)','rgba(66,165,245,0.3)','rgba(21,101,192,0.4)','rgba(13,71,161,0.25)'],
     orbL:'rgba(21,101,192,0.08)', orbR:'rgba(187,222,251,0.5)',
@@ -207,7 +207,7 @@ export default function Login(){
                         <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style={{color:`${t.accent}80`}}/>
                         <input {...register('email')} type="email" placeholder="you@college.edu"
                           className="w-full pl-11 pr-4 py-3 rounded-xl text-sm outline-none transition-all"
-                          style={{background:t.inputBg,border:`1.5px solid ${errors.email?'#EF5350':t.inputBorder}`,color:'#1A237E'}}
+                          style={{background:t.inputBg,border:`1.5px solid ${errors.email?'#EF5350':t.inputBorder}`,color:'#134E4A'}}
                           onFocus={onFocus} onBlur={e=>onBlur(e,!!errors.email)}/>
                       </div>
                       <AnimatePresence>
@@ -221,7 +221,7 @@ export default function Login(){
                         <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style={{color:`${t.accent}80`}}/>
                         <input {...register('password')} type={showPw?'text':'password'} placeholder="••••••••"
                           className="w-full pl-11 pr-11 py-3 rounded-xl text-sm outline-none transition-all"
-                          style={{background:t.inputBg,border:`1.5px solid ${errors.password?'#EF5350':t.inputBorder}`,color:'#1A237E'}}
+                          style={{background:t.inputBg,border:`1.5px solid ${errors.password?'#EF5350':t.inputBorder}`,color:'#134E4A'}}
                           onFocus={onFocus} onBlur={e=>onBlur(e,!!errors.password)}/>
                         <motion.button type="button" whileTap={{scale:0.85}} onClick={()=>setShowPw(v=>!v)}
                           className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors" style={{color:`${t.accent}70`}}>

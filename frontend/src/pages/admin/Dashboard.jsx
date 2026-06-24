@@ -8,7 +8,7 @@ import {
 import { MdDirectionsCar } from 'react-icons/md';
 
 const STAT_CONFIG = [
-  { label: 'Total Renters',       key: 'totalUsers',        icon: FiUsers,        color: 'text-blue-600 bg-blue-50   border-blue-100'   },
+  { label: 'Total Renters',       key: 'totalUsers',        icon: FiUsers,        color: 'text-teal-600 bg-teal-50   border-teal-100'   },
   { label: 'Fleet Owners',        key: 'totalOrganizers',   icon: FiTruck,         color: 'text-violet-600 bg-violet-50 border-violet-100' },
   { label: 'Total Listings',      key: 'totalEvents',       icon: MdDirectionsCar, color: 'text-teal-600 bg-teal-50   border-teal-100'   },
   { label: 'Pending Approvals',   key: 'pendingApprovals',  icon: FiAlertCircle,  color: 'text-amber-600 bg-amber-50  border-amber-100'  },

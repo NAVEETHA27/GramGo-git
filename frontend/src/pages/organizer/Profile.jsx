@@ -67,7 +67,7 @@ const tabContent = {
 function Field({ label, icon, error, children }) {
   return (
     <div>
-      <label className="flex items-center gap-1.5 text-sm font-semibold text-blue-900 mb-1.5">
+      <label className="flex items-center gap-1.5 text-sm font-semibold text-slate-900 mb-1.5">
         {icon && <span className="text-red-400 w-4 h-4">{icon}</span>}{label}
       </label>
       {children}
@@ -105,7 +105,7 @@ function LogoUploader({ profile, onUpload }) {
     <div className="relative w-24 h-24">
       <motion.div whileHover={{ scale: 1.04 }}
         className="w-24 h-24 rounded-2xl overflow-hidden shadow-lg flex items-center justify-center text-white text-3xl font-bold cursor-pointer"
-        style={{ background: 'linear-gradient(135deg,#C62828,#1565C0)' }}
+        style={{ background: 'linear-gradient(135deg,#C62828,#0F766E)' }}
         onClick={() => inputRef.current?.click()}>
         {profile?.organizationLogo
           ? <img src={profile.organizationLogo} alt="logo" className="w-full h-full object-cover" />
@@ -193,7 +193,7 @@ function ProfileTab({ profile, refetch }) {
         style={{ boxShadow: '0 4px 20px rgba(198,40,40,0.08)' }}>
         <LogoUploader profile={profile} onUpload={handleLogoUpload} />
         <div className="text-center sm:text-left">
-          <h2 className="text-xl font-extrabold text-blue-900">{profile?.organizerName}</h2>
+          <h2 className="text-xl font-extrabold text-slate-900">{profile?.organizerName}</h2>
           <div className="flex items-center gap-1.5 mt-1 justify-center sm:justify-start">
             <MdBusiness className="w-3.5 h-3.5 text-red-400" />
             <span className="text-sm text-gray-600 font-medium">{profile?.organizationName}</span>
@@ -220,7 +220,7 @@ function ProfileTab({ profile, refetch }) {
       <form onSubmit={handleSubmit(d => mutation.mutate(d))}>
         <div className="bg-white rounded-2xl p-6 border border-red-100 space-y-5"
           style={{ boxShadow: '0 4px 20px rgba(198,40,40,0.08)' }}>
-          <h3 className="text-base font-bold text-blue-900 flex items-center gap-2">
+          <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
             <FiEdit3 className="w-4 h-4 text-red-400" /> Organization Details
           </h3>
 
@@ -311,7 +311,7 @@ function SecurityTab() {
           <FiShield className="text-white w-5 h-5" />
         </div>
         <div>
-          <h3 className="font-bold text-blue-900 text-sm">Account Security</h3>
+          <h3 className="font-bold text-slate-900 text-sm">Account Security</h3>
           <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
             Passwords are BCrypt-hashed. Your organizer token carries ROLE_ORGANIZER and cannot
             access user or admin endpoints. All tokens expire in 15 minutes.
@@ -322,7 +322,7 @@ function SecurityTab() {
       {/* Password change */}
       <div className="bg-white rounded-2xl p-6 border border-red-100 space-y-5"
         style={{ boxShadow:'0 4px 20px rgba(198,40,40,0.08)' }}>
-        <h3 className="text-base font-bold text-blue-900 flex items-center gap-2">
+        <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
           <FiLock className="w-4 h-4 text-red-400"/> Change Password
         </h3>
 
@@ -394,7 +394,7 @@ export default function OrganizerProfile() {
 
   if (isLoading) {
     return (
-      <div style={{ background:'#F0F4FF', minHeight:'100vh' }} className="px-4 py-10">
+      <div style={{ background:'#F6F8FB', minHeight:'100vh' }} className="px-4 py-10">
         <div className="max-w-2xl mx-auto space-y-5">
           <div className="skeleton h-8 w-52 rounded-xl" />
           <div className="skeleton h-36 rounded-2xl" />
@@ -406,11 +406,11 @@ export default function OrganizerProfile() {
   }
 
   return (
-    <div style={{ background:'#F0F4FF', minHeight:'100vh' }} className="px-4 sm:px-6 py-10">
+    <div style={{ background:'#F6F8FB', minHeight:'100vh' }} className="px-4 sm:px-6 py-10">
       <div className="max-w-2xl mx-auto">
 
         <motion.div initial={{ opacity:0, y:-16 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.4 }} className="mb-7">
-          <h1 className="text-3xl font-extrabold text-blue-900" style={{ fontFamily:'Space Grotesk,sans-serif' }}>
+          <h1 className="text-3xl font-extrabold text-slate-900" style={{ fontFamily:'Space Grotesk,sans-serif' }}>
             Fleet Owner Profile
           </h1>
           <p className="text-sm text-gray-500 mt-1">Manage your fleet details and account security.</p>

@@ -7,6 +7,10 @@ import {
   FiAward,
   FiBarChart2,
   FiCheckCircle,
+  FiChevronDown,
+  FiClock,
+  FiCreditCard,
+  FiHeadphones,
   FiMapPin,
   FiSearch,
   FiShield,
@@ -50,6 +54,40 @@ const ownerFeatures = [
 
 const quickTags = ['Cars', 'Bikes', 'SUV', 'Electric'];
 
+const steps = [
+  { icon: FiSearch,      title: 'Search & compare', text: 'Filter verified vehicles by type, location, price, and availability in seconds.' },
+  { icon: FiCheckCircle, title: 'Book instantly',   text: 'Reserve your vehicle online with transparent pricing and instant confirmation.' },
+  { icon: FiKey,         title: 'Pick up & drive',  text: 'Collect your vehicle with clear pickup details and a digital rental agreement.' },
+  { icon: FiClock,       title: 'Return with ease', text: 'Drop off on time and track payments, refunds, and history from your dashboard.' },
+];
+
+const stats = [
+  { value: '1,200+', label: 'Vehicles listed' },
+  { value: '50K+',   label: 'Rentals completed' },
+  { value: '300+',   label: 'Cities covered' },
+  { value: '98%',    label: 'Customer satisfaction' },
+];
+
+const trustBadges = [
+  { icon: FiShield,     label: 'Verified vehicles' },
+  { icon: FiCreditCard, label: 'Secure payments' },
+  { icon: FiHeadphones, label: '24/7 support' },
+  { icon: FiCheckCircle,label: 'Insurance covered' },
+];
+
+const testimonials = [
+  { name: 'Aarav Mehta',   role: 'Renter · Bengaluru', quote: 'Booking a car for my weekend trip took less than two minutes. Pricing was clear and pickup was effortless.' },
+  { name: 'Priya Nair',    role: 'Renter · Kochi',      quote: 'I loved being able to compare bikes and SUVs side by side. The dashboard kept all my rentals organized.' },
+  { name: 'Rohan Desai',   role: 'Fleet Owner · Pune',  quote: 'Listing my fleet was simple, and managing bookings in real time has genuinely grown my rental business.' },
+];
+
+const faqs = [
+  { q: 'How do I rent a vehicle on GramGo?',         a: 'Search for a vehicle by type or location, pick your dates, and confirm the booking. You will receive instant confirmation and pickup details in your dashboard.' },
+  { q: 'Is insurance included with my rental?',      a: 'Vehicles marked as insured include coverage details on the listing. You can always review insurance status and condition before you book.' },
+  { q: 'Can I cancel or modify my booking?',         a: 'Yes. You can manage, cancel, or review any booking from your rentals dashboard, and eligible cancellations are refunded automatically.' },
+  { q: 'How do I list my own vehicles?',             a: 'Create a fleet owner account, add your vehicles with pricing, availability, location, and insurance details, then start receiving bookings right away.' },
+];
+
 function Reveal({ children, className = '' }) {
   const reduceMotion = useReducedMotion();
   return (
@@ -70,6 +108,7 @@ export default function Landing() {
   const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [location, setLocation] = useState('');
+  const [openFaq, setOpenFaq] = useState(0);
 
   const { data, isLoading } = useQuery(
     'vehicles-landing',
@@ -205,6 +244,38 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* How it works */}
+      <section className="bg-white py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Reveal className="section-heading">
+            <p>How It Works</p>
+            <h2>From search to return in four simple steps.</h2>
+          </Reveal>
+          <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+              return (
+                <motion.div
+                  key={step.title}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.06, duration: 0.45 }}
+                  className="step-card"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="step-index">{index + 1}</span>
+                    <Icon className="h-5 w-5 text-teal-600" />
+                  </div>
+                  <h3>{step.title}</h3>
+                  <p>{step.text}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* Vehicle types */}
       <section className="landing-band py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -232,6 +303,27 @@ export default function Landing() {
                 </motion.button>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Stats band */}
+      <section className="stat-band py-14">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.08, duration: 0.45 }}
+                className="stat-tile"
+              >
+                <div className="stat-value">{stat.value}</div>
+                <div className="stat-label">{stat.label}</div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -301,6 +393,83 @@ export default function Landing() {
               <p>No vehicles are available yet. Check back soon!</p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Testimonials & trust */}
+      <section className="bg-white py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Reveal className="section-heading">
+            <p>Loved By Drivers & Owners</p>
+            <h2>Trusted by thousands of renters and fleet owners.</h2>
+          </Reveal>
+
+          <Reveal className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            {trustBadges.map((badge) => {
+              const Icon = badge.icon;
+              return (
+                <span key={badge.label} className="trust-badge">
+                  <Icon className="h-4 w-4" /> {badge.label}
+                </span>
+              );
+            })}
+          </Reveal>
+
+          <div className="mt-9 grid gap-5 md:grid-cols-3">
+            {testimonials.map((item, index) => (
+              <motion.div
+                key={item.name}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.07, duration: 0.45 }}
+                className="testimonial-card"
+              >
+                <div className="stars" aria-label="Rated 5 out of 5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <FiStar key={i} className="h-4 w-4" fill="currentColor" />
+                  ))}
+                </div>
+                <blockquote>{`"${item.quote}"`}</blockquote>
+                <div className="person">
+                  <span className="avatar">{item.name.charAt(0)}</span>
+                  <div>
+                    <p>{item.name}</p>
+                    <span>{item.role}</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="landing-band py-16">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <Reveal className="section-heading">
+            <p>Frequently Asked Questions</p>
+            <h2>Everything you need to know.</h2>
+          </Reveal>
+          <div className="mt-9 grid gap-3">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div key={faq.q} className={`faq-item ${isOpen ? 'is-open' : ''}`}>
+                  <button
+                    type="button"
+                    className="faq-trigger"
+                    aria-expanded={isOpen}
+                    onClick={() => setOpenFaq(isOpen ? -1 : index)}
+                  >
+                    <span>{faq.q}</span>
+                    <FiChevronDown className="h-5 w-5" />
+                  </button>
+                  {isOpen && <div className="faq-answer">{faq.a}</div>}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 

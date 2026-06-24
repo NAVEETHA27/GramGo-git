@@ -12,13 +12,13 @@ const EMPTY_OTP = ['', '', '', '', '', ''];
 const ROLE_THEME = {
   user: {
     label: 'User account',
-    accent: '#1565C0',
-    accentAlt: '#1976D2',
-    bg: 'linear-gradient(135deg,#E3F2FD 0%,#F8FBFF 58%,#EAF0FA 100%)',
-    curtain: 'linear-gradient(180deg,#1565C0,#0D47A1)',
-    border: '#BBDEFB',
+    accent: '#0F766E',
+    accentAlt: '#14B8A6',
+    bg: 'linear-gradient(135deg,#F0FDFA 0%,#F8FBFF 58%,#EAF0FA 100%)',
+    curtain: 'linear-gradient(180deg,#0F766E,#115E59)',
+    border: '#CCFBF1',
     inputBg: '#F2F8FF',
-    soft: '#E3F2FD',
+    soft: '#F0FDFA',
     dashboard: '/dashboard',
   },
   organizer: {

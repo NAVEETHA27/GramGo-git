@@ -58,11 +58,11 @@ export default function BrowseVehicles() {
   const activeCount = [filters.category, filters.eventType, filters.location, filters.priceMin, filters.priceMax, filters.freeOnly].filter(Boolean).length;
 
   return (
-    <div style={{ background: '#F0F4FF', minHeight: '100vh' }}>
+    <div style={{ background: '#F6F8FB', minHeight: '100vh' }}>
       {/* Header */}
-      <div className="bg-white border-b border-blue-100 py-8 px-4">
+      <div className="bg-white border-b border-teal-100 py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <p className="text-xs font-bold uppercase tracking-widest text-blue-500 mb-1">Discover</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-teal-500 mb-1">Discover</p>
           <h1 className="section-title mb-1">Browse Vehicles</h1>
           <p className="text-sm text-gray-500">
             {data?.totalElements ? `${data.totalElements.toLocaleString()} vehicles available` : 'Find your perfect ride'}
@@ -89,12 +89,12 @@ export default function BrowseVehicles() {
           <button
             type="button"
             onClick={() => setSidebar(!sidebar)}
-            className={`btn-outline flex items-center gap-2 whitespace-nowrap ${activeCount > 0 ? 'bg-blue-50' : ''}`}
+            className={`btn-outline flex items-center gap-2 whitespace-nowrap ${activeCount > 0 ? 'bg-teal-50' : ''}`}
           >
             <FiFilter className="w-4 h-4" />
             Filters
             {activeCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] flex items-center justify-center font-bold">{activeCount}</span>
+              <span className="w-5 h-5 rounded-full bg-teal-600 text-white text-[10px] flex items-center justify-center font-bold">{activeCount}</span>
             )}
           </button>
         </form>
@@ -111,9 +111,9 @@ export default function BrowseVehicles() {
                 className="flex-shrink-0 overflow-hidden"
                 style={{ minWidth: '17rem' }}
               >
-                <div className="bg-white rounded-2xl p-5 sticky top-20 border border-blue-100 shadow-card">
+                <div className="bg-white rounded-2xl p-5 sticky top-20 border border-teal-100 shadow-card">
                   <div className="flex items-center justify-between mb-5">
-                    <h3 className="font-bold text-blue-900">Filters</h3>
+                    <h3 className="font-bold text-slate-900">Filters</h3>
                     <div className="flex gap-3">
                       {activeCount > 0 && <button onClick={clear} className="text-xs text-red-500 font-medium">Clear all</button>}
                       <button onClick={() => setSidebar(false)} className="text-gray-400 hover:text-gray-600"><FiX className="w-4 h-4" /></button>
@@ -130,7 +130,7 @@ export default function BrowseVehicles() {
                             value={type}
                             checked={filters.category === type}
                             onChange={() => set('category', filters.category === type ? '' : type)}
-                            className="accent-blue-600"
+                            className="accent-teal-600"
                           />
                           <span className="text-sm text-gray-600">{TYPE_LABELS[type]}</span>
                         </label>
@@ -147,7 +147,7 @@ export default function BrowseVehicles() {
                           value={t}
                           checked={filters.eventType === t}
                           onChange={() => set('eventType', filters.eventType === t ? '' : t)}
-                          className="accent-blue-600"
+                          className="accent-teal-600"
                         />
                         <span className="text-sm text-gray-600">{t.charAt(0) + t.slice(1).toLowerCase()}</span>
                       </label>
@@ -187,7 +187,7 @@ export default function BrowseVehicles() {
                         type="checkbox"
                         checked={filters.freeOnly}
                         onChange={(e) => set('freeOnly', e.target.checked)}
-                        className="accent-blue-600 rounded"
+                        className="accent-teal-600 rounded"
                       />
                       <span className="text-sm text-gray-600">Free rentals only</span>
                     </label>
@@ -212,9 +212,9 @@ export default function BrowseVehicles() {
                 </div>
 
                 {!data?.content?.length && (
-                  <div className="text-center py-24 bg-white rounded-2xl border border-blue-100">
+                  <div className="text-center py-24 bg-white rounded-2xl border border-teal-100">
                     <div className="text-5xl mb-4">🚗</div>
-                    <h3 className="text-xl font-bold text-blue-900 mb-2">No vehicles found</h3>
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">No vehicles found</h3>
                     <p className="text-gray-500 mb-6 text-sm">Try adjusting your search or filters.</p>
                     <button onClick={clear} className="btn-primary">Clear Filters</button>
                   </div>
@@ -241,7 +241,7 @@ function FSection({ title, children }) {
   return (
     <div className="mb-5">
       <button onClick={() => setOpen(!open)} className="flex items-center justify-between w-full mb-2.5">
-        <span className="text-xs font-bold uppercase tracking-wider text-blue-600">{title}</span>
+        <span className="text-xs font-bold uppercase tracking-wider text-teal-600">{title}</span>
         <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
           <FiChevronDown className="w-3.5 h-3.5 text-gray-400" />
         </motion.span>
