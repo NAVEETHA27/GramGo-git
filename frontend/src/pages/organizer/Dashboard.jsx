@@ -42,7 +42,7 @@ export default function FleetOwnerDashboard() {
 
   const stats = [
     { label: 'Total Listings',  value: dashboard?.totalEvents ?? 0,
-      icon: <MdDirectionsCar />, cls: 'text-blue-600 bg-blue-50 border-blue-100' },
+      icon: <MdDirectionsCar />, cls: 'text-teal-600 bg-teal-50 border-teal-100' },
     { label: 'Total Revenue',   value: `Rs. ${Number(dashboard?.totalRevenue ?? 0).toLocaleString()}`,
       icon: <FiDollarSign />,    cls: 'text-green-600 bg-green-50 border-green-100' },
     { label: 'Active Listings', value: vehicleList.filter((v) => v.status === 'PUBLISHED').length,

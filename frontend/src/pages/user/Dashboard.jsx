@@ -29,7 +29,7 @@ export default function UserDashboard() {
   const insured    = rentalList.filter((b) => b.event?.hasCertificate && b.bookingStatus === 'CONFIRMED').length;
 
   const stats = [
-    { label: 'Total Rentals',   value: total,     icon: <MdDirectionsCar />, cls: 'text-blue-600 bg-blue-50 border-blue-100' },
+    { label: 'Total Rentals',   value: total,     icon: <MdDirectionsCar />, cls: 'text-teal-600 bg-teal-50 border-teal-100' },
     { label: 'Active',          value: confirmed,  icon: <FiCheckCircle />,   cls: 'text-green-600 bg-green-50 border-green-100' },
     { label: 'Cancelled',       value: cancelled,  icon: <FiXCircle />,       cls: 'text-rose-600 bg-rose-50 border-rose-100' },
     { label: 'Insured Rentals', value: insured,    icon: <FiKey />,           cls: 'text-amber-600 bg-amber-50 border-amber-100' },

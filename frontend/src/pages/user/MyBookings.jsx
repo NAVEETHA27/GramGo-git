@@ -34,22 +34,22 @@ export default function MyRentals() {
 
   if (isLoading) return <Spinner />;
   if (isError)   return (
-    <div style={{ background: '#F0F4FF', minHeight: '100vh' }} className="px-4 py-10 max-w-4xl mx-auto">
+    <div style={{ background: '#F6F8FB', minHeight: '100vh' }} className="px-4 py-10 max-w-4xl mx-auto">
       <QueryError message={error?.response?.data?.message} onRetry={refetch} />
     </div>
   );
 
   return (
-    <div style={{ background: '#F0F4FF', minHeight: '100vh' }} className="px-4 sm:px-6 lg:px-8 py-10">
+    <div style={{ background: '#F6F8FB', minHeight: '100vh' }} className="px-4 sm:px-6 lg:px-8 py-10">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-blue-900 mb-8" style={{ fontFamily: 'Space Grotesk,sans-serif' }}>
+        <h1 className="text-3xl font-extrabold text-slate-900 mb-8" style={{ fontFamily: 'Space Grotesk,sans-serif' }}>
           My Rentals
         </h1>
 
         {!data?.content?.length ? (
-          <div className="bg-white rounded-3xl p-16 text-center border border-blue-100 shadow-card">
+          <div className="bg-white rounded-3xl p-16 text-center border border-teal-100 shadow-card">
             <div className="text-5xl mb-4">🚗</div>
-            <h3 className="text-xl font-bold text-blue-900 mb-2">No rentals yet</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">No rentals yet</h3>
             <p className="text-gray-500 mb-6 text-sm">Browse available vehicles and book your first rental!</p>
             <Link to="/events" className="btn-primary">Browse Vehicles</Link>
           </div>
@@ -60,10 +60,10 @@ export default function MyRentals() {
                 key={rental.id}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-2xl p-5 flex flex-col sm:flex-row gap-4 border border-blue-100 shadow-card"
+                className="bg-white rounded-2xl p-5 flex flex-col sm:flex-row gap-4 border border-teal-100 shadow-card"
               >
                 {/* Vehicle thumbnail */}
-                <div className="w-full sm:w-28 h-24 rounded-xl overflow-hidden bg-blue-50 flex-shrink-0 flex items-center justify-center">
+                <div className="w-full sm:w-28 h-24 rounded-xl overflow-hidden bg-teal-50 flex-shrink-0 flex items-center justify-center">
                   {rental.event?.eventBanner
                     ? <img src={rental.event.eventBanner} alt="" className="w-full h-full object-cover" />
                     : <span className="text-3xl">🚗</span>}
@@ -73,7 +73,7 @@ export default function MyRentals() {
                   <div className="flex items-start justify-between gap-2 flex-wrap mb-2">
                     <Link
                       to={`/events/${rental.event?.id}`}
-                      className="font-bold text-blue-900 hover:text-blue-600 transition-colors text-sm leading-snug line-clamp-2"
+                      className="font-bold text-slate-900 hover:text-teal-600 transition-colors text-sm leading-snug line-clamp-2"
                     >
                       {rental.event?.eventName}
                     </Link>
@@ -84,7 +84,7 @@ export default function MyRentals() {
 
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500 mb-3">
                     <span className="flex items-center gap-1">
-                      <FiCalendar className="text-blue-400" />
+                      <FiCalendar className="text-teal-400" />
                       {rental.bookedAt ? new Date(rental.bookedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
                     </span>
                     {rental.event?.location && (
@@ -96,7 +96,7 @@ export default function MyRentals() {
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3 text-xs">
-                    <code className="bg-blue-50 text-blue-700 px-2 py-1 rounded-lg font-mono border border-blue-100">
+                    <code className="bg-teal-50 text-teal-700 px-2 py-1 rounded-lg font-mono border border-teal-100">
                       {rental.ticketId}
                     </code>
                     <span className="text-gray-500">
@@ -140,15 +140,15 @@ export default function MyRentals() {
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border border-blue-100"
+              className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border border-teal-100"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-lg font-bold text-blue-900 mb-1">Rental Confirmation</h3>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">Rental Confirmation</h3>
               <p className="text-gray-500 text-sm mb-5">{qrModal.event?.eventName}</p>
               <div className="flex justify-center mb-4">
                 <QRCodeSVG value={qrModal.ticketId} size={190} />
               </div>
-              <code className="text-sm bg-blue-50 text-blue-700 px-4 py-2 rounded-xl block mb-5 font-mono border border-blue-100">
+              <code className="text-sm bg-teal-50 text-teal-700 px-4 py-2 rounded-xl block mb-5 font-mono border border-teal-100">
                 {qrModal.ticketId}
               </code>
               <button onClick={() => setQrModal(null)} className="btn-primary w-full">Close</button>

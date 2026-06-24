@@ -73,8 +73,8 @@ const tab = {
 function Field({label,icon,error,children}){
   return(
     <div>
-      <label className="flex items-center gap-1.5 text-sm font-semibold text-blue-900 mb-1.5">
-        {icon&&<span className="text-blue-400 w-4 h-4">{icon}</span>}{label}
+      <label className="flex items-center gap-1.5 text-sm font-semibold text-slate-900 mb-1.5">
+        {icon&&<span className="text-teal-400 w-4 h-4">{icon}</span>}{label}
       </label>
       {children}
       <AnimatePresence>
@@ -107,7 +107,7 @@ function AvatarUploader({profile,onUpload}){
     <div className="relative w-24 h-24">
       <motion.div whileHover={{scale:1.04}}
         className="w-24 h-24 rounded-2xl overflow-hidden shadow-lg flex items-center justify-center text-white text-3xl font-bold cursor-pointer"
-        style={{background:'linear-gradient(135deg,#1565C0,#D32F2F)'}}
+        style={{background:'linear-gradient(135deg,#0F766E,#D32F2F)'}}
         onClick={()=>ref.current?.click()}>
         {profile?.profilePicture
           ?<img src={profile.profilePicture} alt="" className="w-full h-full object-cover"/>
@@ -120,7 +120,7 @@ function AvatarUploader({profile,onUpload}){
       <motion.button whileHover={{scale:1.12}} whileTap={{scale:0.9}} type="button"
         onClick={()=>ref.current?.click()}
         className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-white shadow-lg"
-        style={{background:'linear-gradient(135deg,#1565C0,#1976D2)'}}>
+        style={{background:'linear-gradient(135deg,#0F766E,#14B8A6)'}}>
         <FiCamera className="w-3.5 h-3.5"/>
       </motion.button>
       <input ref={ref} type="file" accept="image/*" className="hidden" onChange={handle}/>
@@ -179,12 +179,12 @@ function ProfileTab({profile,refetch}){
   return(
     <motion.div variants={tab} initial="initial" animate="animate" exit="exit">
       {/* identity card */}
-      <div className="bg-white rounded-2xl p-6 mb-5 border border-blue-100 flex flex-col sm:flex-row items-center sm:items-start gap-6"
+      <div className="bg-white rounded-2xl p-6 mb-5 border border-teal-100 flex flex-col sm:flex-row items-center sm:items-start gap-6"
         style={{boxShadow:'0 4px 20px rgba(21,101,192,0.08)'}}>
         <AvatarUploader profile={profile} onUpload={onAvatarUpload}/>
         <div className="text-center sm:text-left">
-          <h2 className="text-xl font-extrabold text-blue-900">{profile?.name}</h2>
-          <p className="mt-1 inline-flex rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">
+          <h2 className="text-xl font-extrabold text-slate-900">{profile?.name}</h2>
+          <p className="mt-1 inline-flex rounded-lg bg-teal-50 px-2.5 py-1 text-xs font-bold text-teal-700">
             ID: {profile?.userCode || 'Generating'}
           </p>
           <div className="flex items-center gap-1.5 mt-1 justify-center sm:justify-start">
@@ -206,10 +206,10 @@ function ProfileTab({profile,refetch}){
       </div>
 
       <form onSubmit={handleSubmit(d=>mutation.mutate(d))}>
-        <div className="bg-white rounded-2xl p-6 border border-blue-100 space-y-5"
+        <div className="bg-white rounded-2xl p-6 border border-teal-100 space-y-5"
           style={{boxShadow:'0 4px 20px rgba(21,101,192,0.08)'}}>
-          <h3 className="text-base font-bold text-blue-900 flex items-center gap-2">
-            <FiEdit3 className="w-4 h-4 text-blue-500"/>Personal Information
+          <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <FiEdit3 className="w-4 h-4 text-teal-500"/>Personal Information
           </h3>
 
           <Field label="Full Name" icon={<FiUser/>} error={errors.name?.message}>
@@ -283,11 +283,11 @@ function SecurityTab(){
   const PwField=({label,regKey,showKey,error})=>(
     <Field label={label} icon={<FiLock/>} error={error}>
       <div className="relative">
-        <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-300 pointer-events-none"/>
+        <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-teal-300 pointer-events-none"/>
         <input {...register(regKey)} type={show[showKey]?'text':'password'} placeholder="••••••••"
           className={`input-field pl-10 pr-10 ${error?'border-red-300':''}`}/>
         <button type="button" onClick={()=>toggle(showKey)}
-          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-blue-300 hover:text-blue-600 transition-colors">
+          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-teal-300 hover:text-teal-600 transition-colors">
           {show[showKey]?<FiEyeOff className="w-4 h-4"/>:<FiEye className="w-4 h-4"/>}
         </button>
       </div>
@@ -296,22 +296,22 @@ function SecurityTab(){
 
   return(
     <motion.div variants={tab} initial="initial" animate="animate" exit="exit" className="space-y-5">
-      <div className="bg-white rounded-2xl p-5 border border-blue-100 flex items-start gap-4"
+      <div className="bg-white rounded-2xl p-5 border border-teal-100 flex items-start gap-4"
         style={{boxShadow:'0 4px 20px rgba(21,101,192,0.08)'}}>
         <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{background:'linear-gradient(135deg,#1565C0,#1976D2)'}}>
+          style={{background:'linear-gradient(135deg,#0F766E,#14B8A6)'}}>
           <FiShield className="text-white w-5 h-5"/>
         </div>
         <div>
-          <h3 className="font-bold text-blue-900 text-sm">Account Security</h3>
+          <h3 className="font-bold text-slate-900 text-sm">Account Security</h3>
           <p className="text-xs text-gray-500 mt-0.5">Passwords are BCrypt-hashed. Tokens expire in 15 min.</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl p-6 border border-blue-100 space-y-5"
+      <div className="bg-white rounded-2xl p-6 border border-teal-100 space-y-5"
         style={{boxShadow:'0 4px 20px rgba(21,101,192,0.08)'}}>
-        <h3 className="text-base font-bold text-blue-900 flex items-center gap-2">
-          <FiLock className="w-4 h-4 text-blue-500"/>Change Password
+        <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <FiLock className="w-4 h-4 text-teal-500"/>Change Password
         </h3>
         <form onSubmit={handleSubmit(d=>mutation.mutate(d))} className="space-y-4">
           <PwField label="Current Password" regKey="currentPassword" showKey="cur" error={errors.currentPassword?.message}/>
@@ -321,7 +321,7 @@ function SecurityTab(){
               <div className="flex gap-1">
                 {[1,2,3,4,5].map(i=>(
                   <motion.div key={i} className="h-1.5 flex-1 rounded-full"
-                    animate={{background:i<=pwStrength(watchedPw)?SC[pwStrength(watchedPw)]:'#E3F2FD'}}
+                    animate={{background:i<=pwStrength(watchedPw)?SC[pwStrength(watchedPw)]:'#F0FDFA'}}
                     transition={{duration:0.3}}/>
                 ))}
               </div>
@@ -402,11 +402,11 @@ function LocationTab(){
 
   return(
     <motion.div variants={tab} initial="initial" animate="animate" exit="exit">
-      <form onSubmit={handleSubmit(d=>mutation.mutate(d))} className="bg-white rounded-2xl p-6 border border-blue-100 space-y-5"
+      <form onSubmit={handleSubmit(d=>mutation.mutate(d))} className="bg-white rounded-2xl p-6 border border-teal-100 space-y-5"
         style={{boxShadow:'0 4px 20px rgba(21,101,192,0.08)'}}>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-base font-bold text-blue-900 flex items-center gap-2">
-            <FiMapPin className="w-4 h-4 text-blue-500"/>Location
+          <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <FiMapPin className="w-4 h-4 text-teal-500"/>Location
           </h3>
           <button type="button" onClick={detect} className="btn-outline px-4 py-2 text-sm">Detect Location</button>
         </div>
@@ -430,7 +430,7 @@ function LocationTab(){
           </Field>
         </div>
         {mapsUrl&&(
-          <a href={mapsUrl} target="_blank" rel="noreferrer" className="inline-flex text-sm font-bold text-blue-700 hover:underline">
+          <a href={mapsUrl} target="_blank" rel="noreferrer" className="inline-flex text-sm font-bold text-teal-700 hover:underline">
             Open in Google Maps
           </a>
         )}
@@ -455,7 +455,7 @@ export default function UserProfile(){
   );
 
   if(isLoading) return(
-    <div style={{background:'#F0F4FF',minHeight:'100vh'}} className="px-4 py-10">
+    <div style={{background:'#F6F8FB',minHeight:'100vh'}} className="px-4 py-10">
       <div className="max-w-2xl mx-auto space-y-5">
         <div className="skeleton h-8 w-40 rounded-xl"/>
         <div className="skeleton h-36 rounded-2xl"/>
@@ -466,10 +466,10 @@ export default function UserProfile(){
   );
 
   return(
-    <div style={{background:'#F0F4FF',minHeight:'100vh'}} className="px-4 sm:px-6 py-10">
+    <div style={{background:'#F6F8FB',minHeight:'100vh'}} className="px-4 sm:px-6 py-10">
       <div className="max-w-2xl mx-auto">
         <motion.div initial={{opacity:0,y:-16}} animate={{opacity:1,y:0}} transition={{duration:0.4}} className="mb-7">
-          <h1 className="text-3xl font-extrabold text-blue-900" style={{fontFamily:'Space Grotesk,sans-serif'}}>
+          <h1 className="text-3xl font-extrabold text-slate-900" style={{fontFamily:'Space Grotesk,sans-serif'}}>
             My Profile
           </h1>
           <p className="text-sm text-gray-500 mt-1">Manage your account and security settings.</p>
@@ -477,7 +477,7 @@ export default function UserProfile(){
 
         {/* tab strip */}
         <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:0.1}}
-          className="flex p-1 rounded-2xl bg-white border border-blue-100 mb-6"
+          className="flex p-1 rounded-2xl bg-white border border-teal-100 mb-6"
           style={{boxShadow:'0 2px 12px rgba(21,101,192,0.07)'}}>
           {TABS.map(t=>(
             <button key={t.id} type="button" onClick={()=>setActiveTab(t.id)}
@@ -485,7 +485,7 @@ export default function UserProfile(){
               <AnimatePresence>
                 {activeTab===t.id&&(
                   <motion.div layoutId="user-tab-pill" className="absolute inset-0 rounded-xl"
-                    style={{background:'linear-gradient(135deg,#1565C0,#1976D2)'}}
+                    style={{background:'linear-gradient(135deg,#0F766E,#14B8A6)'}}
                     initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:0.2}}/>
                 )}
               </AnimatePresence>

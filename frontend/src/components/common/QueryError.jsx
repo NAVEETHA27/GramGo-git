@@ -24,7 +24,7 @@ export default function QueryError({ message, onRetry }) {
           whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
           onClick={onRetry}
           className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white"
-          style={{ background: 'linear-gradient(135deg,#1565C0,#1976D2)' }}>
+          style={{ background: 'linear-gradient(135deg,#0F766E,#14B8A6)' }}>
           <FiRefreshCw className="w-4 h-4" /> Retry
         </motion.button>
       )}

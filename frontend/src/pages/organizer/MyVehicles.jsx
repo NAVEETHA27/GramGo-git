@@ -25,10 +25,10 @@ export default function MyFleet() {
   if (isLoading) return <Spinner />;
 
   return (
-    <div style={{ background:'#F0F4FF', minHeight:'100vh' }} className="px-4 sm:px-6 lg:px-8 py-10">
+    <div style={{ background:'#F6F8FB', minHeight:'100vh' }} className="px-4 sm:px-6 lg:px-8 py-10">
       <div className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-extrabold text-blue-900" style={{ fontFamily:'Space Grotesk,sans-serif' }}>My Fleet</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900" style={{ fontFamily:'Space Grotesk,sans-serif' }}>My Fleet</h1>
           <Link to="/organizer/events/create" className="btn-primary flex items-center gap-2">
             <FiPlus /> Add Vehicle
           </Link>
@@ -39,7 +39,7 @@ export default function MyFleet() {
           {['','DRAFT','PUBLISHED','COMPLETED','CANCELLED'].map(s => (
             <button key={s} onClick={() => { setFilter(s); setPage(0); }}
               className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                filter===s ? 'bg-blue-600 text-white shadow-blue' : 'bg-white text-gray-600 border border-blue-100 hover:bg-blue-50'
+                filter===s ? 'bg-teal-600 text-white shadow-blue' : 'bg-white text-gray-600 border border-teal-100 hover:bg-teal-50'
               }`}>
               {s || 'All'}
             </button>
@@ -47,14 +47,14 @@ export default function MyFleet() {
         </div>
 
         {!data?.content?.length ? (
-          <div className="bg-white rounded-3xl p-16 text-center border border-blue-100 shadow-card">
+          <div className="bg-white rounded-3xl p-16 text-center border border-teal-100 shadow-card">
             <div className="text-5xl mb-4">🚗</div>
             <p className="text-gray-500 mb-4">No vehicles listed yet.</p>
             <Link to="/organizer/events/create" className="btn-primary">List your first vehicle</Link>
           </div>
         ) : (
           <>
-            <div className="bg-white rounded-2xl overflow-hidden border border-blue-100 shadow-card">
+            <div className="bg-white rounded-2xl overflow-hidden border border-teal-100 shadow-card">
               <table className="data-table">
                 <thead>
                   <tr>{['Vehicle','Type','Price/Day','Rented','Revenue','Status','Actions'].map(h => <th key={h}>{h}</th>)}</tr>
@@ -65,16 +65,16 @@ export default function MyFleet() {
                     const revenue = (rented * Number(v.ticketPrice)).toLocaleString();
                     return (
                       <tr key={v.id}>
-                        <td className="font-semibold text-blue-900 max-w-xs truncate">{v.eventName}</td>
+                        <td className="font-semibold text-slate-900 max-w-xs truncate">{v.eventName}</td>
                         <td><span className="badge badge-blue text-[10px]">{v.category?.replace(/_/g,' ')}</span></td>
                         <td className="text-gray-500 whitespace-nowrap">Rs.{Number(v.ticketPrice||0).toLocaleString()}</td>
                         <td className="text-gray-500">{rented}/{v.totalSeats}</td>
-                        <td className="font-semibold text-blue-900">Rs.{revenue}</td>
+                        <td className="font-semibold text-slate-900">Rs.{revenue}</td>
                         <td><span className={`badge ${STATUS_BADGE[v.status]||'badge-gray'}`}>{v.status}</span></td>
                         <td>
                           <div className="flex items-center gap-2">
                             <Link to={`/organizer/events/${v.id}/edit`} title="Edit"
-                              className="p-1.5 rounded-lg text-blue-500 hover:bg-blue-50 transition-colors">
+                              className="p-1.5 rounded-lg text-teal-500 hover:bg-teal-50 transition-colors">
                               <FiEdit2 className="w-4 h-4" />
                             </Link>
                             {v.status === 'DRAFT' && (

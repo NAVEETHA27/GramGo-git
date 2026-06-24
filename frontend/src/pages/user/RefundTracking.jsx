@@ -11,10 +11,10 @@ const REFUND_STEPS = [
 
 const STATUS_META = {
   INITIATED:          { color:'#546E7A', bg:'#ECEFF1', label:'Initiated',          icon:<FiClock/> },
-  REFUND_REQUESTED:   { color:'#1565C0', bg:'#E3F2FD', label:'Refund Requested',   icon:<FiClock/> },
+  REFUND_REQUESTED:   { color:'#0F766E', bg:'#F0FDFA', label:'Refund Requested',   icon:<FiClock/> },
   UNDER_VERIFICATION: { color:'#7B1FA2', bg:'#F3E5F5', label:'Under Verification', icon:<FiClock/> },
   APPROVED:           { color:'#2E7D32', bg:'#E8F5E9', label:'Approved',           icon:<FiCheckCircle/> },
-  PROCESSING:         { color:'#1565C0', bg:'#E3F2FD', label:'Processing',         icon:<FiRefreshCw className="animate-spin"/> },
+  PROCESSING:         { color:'#0F766E', bg:'#F0FDFA', label:'Processing',         icon:<FiRefreshCw className="animate-spin"/> },
   COMPLETED:          { color:'#2E7D32', bg:'#E8F5E9', label:'Completed',          icon:<FiCheckCircle/> },
   REJECTED:           { color:'#C62828', bg:'#FFEBEE', label:'Rejected',           icon:<FiAlertTriangle/> },
 };
@@ -29,25 +29,25 @@ export default function RefundTracking() {
   const refunds = Array.isArray(data) ? data : [];
 
   return (
-    <div className="min-h-screen px-4 py-10" style={{background:'#F0F4FF'}}>
+    <div className="min-h-screen px-4 py-10" style={{background:'#F6F8FB'}}>
       <div className="max-w-3xl mx-auto">
 
         <motion.div initial={{opacity:0,y:-12}} animate={{opacity:1,y:0}} className="mb-7">
-          <h1 className="text-3xl font-extrabold text-blue-900" style={{fontFamily:'Space Grotesk,sans-serif'}}>Refund Tracking</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900" style={{fontFamily:'Space Grotesk,sans-serif'}}>Refund Tracking</h1>
           <p className="text-sm text-gray-500 mt-1">Track your refund requests in real time.</p>
         </motion.div>
 
         {/* Acknowledgement banner */}
         <motion.div initial={{opacity:0,x:-8}} animate={{opacity:1,x:0}} transition={{delay:0.05}}
-          className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6 flex items-start gap-3 text-sm text-blue-800">
-          <FiAlertTriangle className="flex-shrink-0 mt-0.5 text-blue-500"/>
+          className="bg-teal-50 border border-teal-200 rounded-2xl p-4 mb-6 flex items-start gap-3 text-sm text-teal-800">
+          <FiAlertTriangle className="flex-shrink-0 mt-0.5 text-teal-500"/>
           <span>Your refund request has been received. Refunds typically take <strong>3–7 business days</strong> depending on your payment provider.</span>
         </motion.div>
 
         {isLoading ? (
           <div className="space-y-4">{[1,2,3].map(i=><div key={i} className="skeleton h-40 rounded-2xl"/>)}</div>
         ) : refunds.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-blue-100 p-12 text-center"
+          <div className="bg-white rounded-3xl border border-teal-100 p-12 text-center"
             style={{boxShadow:'0 4px 24px rgba(21,101,192,0.08)'}}>
             <FiCheckCircle className="w-12 h-12 text-gray-200 mx-auto mb-3"/>
             <p className="font-semibold text-gray-400">No refund requests found</p>
@@ -68,13 +68,13 @@ function RefundCard({ refund, index }) {
 
   return (
     <motion.div initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} transition={{delay:index*0.08}}
-      className="bg-white rounded-3xl border border-blue-100 p-6 mb-4"
+      className="bg-white rounded-3xl border border-teal-100 p-6 mb-4"
       style={{boxShadow:'0 4px 24px rgba(21,101,192,0.08)'}}>
 
       {/* Header */}
       <div className="flex items-start justify-between gap-4 mb-4">
         <div>
-          <div className="font-extrabold text-blue-900 text-base">{refund.eventName || 'Vehicle Rental'}</div>
+          <div className="font-extrabold text-slate-900 text-base">{refund.eventName || 'Vehicle Rental'}</div>
           <div className="text-xs text-gray-400 mt-0.5 font-mono">Refund ID: {refund.refundId || '—'}</div>
         </div>
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
@@ -85,7 +85,7 @@ function RefundCard({ refund, index }) {
 
       {/* Amount + date */}
       <div className="flex gap-6 text-sm mb-5">
-        <div><span className="text-gray-400 text-xs">Amount</span><div className="font-extrabold text-blue-900 text-lg">{fmt(refund.amount)}</div></div>
+        <div><span className="text-gray-400 text-xs">Amount</span><div className="font-extrabold text-slate-900 text-lg">{fmt(refund.amount)}</div></div>
         {refund.requestedAt && <div><span className="text-gray-400 text-xs">Requested</span><div className="font-semibold text-gray-700">{new Date(refund.requestedAt).toLocaleDateString('en-IN')}</div></div>}
         {refund.expectedRefundDate && <div><span className="text-gray-400 text-xs">Expected By</span><div className="font-semibold text-green-700">{new Date(refund.expectedRefundDate).toLocaleDateString('en-IN')}</div></div>}
       </div>
@@ -94,10 +94,10 @@ function RefundCard({ refund, index }) {
       {!rejected && (
         <div className="space-y-2">
           <div className="flex justify-between text-[10px] font-semibold text-gray-400 mb-1">
-            {REFUND_STEPS.map(s => <span key={s} className={stepIdx >= REFUND_STEPS.indexOf(s) ? 'text-blue-600' : ''}>{STATUS_META[s]?.label}</span>)}
+            {REFUND_STEPS.map(s => <span key={s} className={stepIdx >= REFUND_STEPS.indexOf(s) ? 'text-teal-600' : ''}>{STATUS_META[s]?.label}</span>)}
           </div>
-          <div className="h-1.5 bg-blue-100 rounded-full overflow-hidden">
-            <motion.div className="h-full rounded-full bg-blue-500"
+          <div className="h-1.5 bg-teal-100 rounded-full overflow-hidden">
+            <motion.div className="h-full rounded-full bg-teal-500"
               initial={{width:0}} animate={{width: stepIdx>=0 ? `${((stepIdx+1)/REFUND_STEPS.length)*100}%` : '0%'}}
               transition={{duration:0.8,ease:'easeOut'}}/>
           </div>
