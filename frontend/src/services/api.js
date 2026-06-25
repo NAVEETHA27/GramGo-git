@@ -8,7 +8,6 @@ const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
-
 // ── Response interceptor ─────────────────────────────────────────────
 api.interceptors.response.use(
     (res) => res,
