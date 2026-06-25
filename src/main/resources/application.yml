@@ -7,18 +7,16 @@ spring:
   application:
     name: gramgo
 
-  # ── MySQL ─────────────────────────────────────────────────────────────────
   datasource:
-    url: jdbc:mysql://localhost:3306/vehicle_rental_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: root
-    password: ${DB_PASSWORD:@navii27}
+    url: jdbc:mysql://gramgo.ctwwi48aqroc.eu-north-1.rds.amazonaws.com:3306/vehicle_rental_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: admin
+    password: Navii2703
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2
       connection-timeout: 30000
 
-  # ── JPA / Hibernate ───────────────────────────────────────────────────────
   jpa:
     hibernate:
       ddl-auto: update
@@ -29,29 +27,16 @@ spring:
         format_sql: true
     open-in-view: false
 
-  # ── MongoDB ───────────────────────────────────────────────────────────────
   data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      timeout: 2s
     mongodb:
-      uri: mongodb://localhost:27017/vehicle_rental_logs
+      uri: mongodb+srv://naveetha:%40navii27@cluster0.w58fep3.mongodb.net/vehicle_rental_logs?retryWrites=true&w=majority&appName=Cluster0
       auto-index-creation: true
-      # If MongoDB is not running, the app will still start (graceful degradation)
-      # To disable MongoDB entirely, change to: spring.autoconfigure.exclude
 
-  # ── Mail (SMTP) ───────────────────────────────────────────────────────────
-  # REQUIRED for OTP emails. Set these environment variables before starting:
-  #   Windows CMD:   set MAIL_USERNAME=yourname@gmail.com
-  #                  set MAIL_PASSWORD=xxxx xxxx xxxx xxxx
-  #   PowerShell:    $env:MAIL_USERNAME="yourname@gmail.com"
-  #                  $env:MAIL_PASSWORD="xxxx xxxx xxxx xxxx"
-  #
-  # Get Gmail App Password: Google Account → Security → 2-Step Verification → App Passwords
-  # Select "Mail" + "Other (Custom name)" → generate → copy 16-char password
-  #
-  # ⚠️  Replace the defaults below with your real values if you don't use env vars:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2s
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -70,13 +55,11 @@ spring:
           timeout: 10000
           writetimeout: 10000
 
-  # ── File Upload ───────────────────────────────────────────────────────────
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
 
-# ── JWT ───────────────────────────────────────────────────────────────────
 jwt:
   secret: ${JWT_SECRET:change-me-in-production-use-a-long-random-string-32chars-min}
   expiration: 900000
@@ -95,26 +78,14 @@ razorpay:
   key-id: ${RAZORPAY_KEY_ID:rzp_test_REPLACE_WITH_YOUR_KEY_ID}
   key-secret: ${RAZORPAY_KEY_SECRET:REPLACE_WITH_YOUR_KEY_SECRET}
   currency: ${RAZORPAY_CURRENCY:INR}
-  # ── How to get Razorpay keys ──────────────────────────────────────────────
-  # 1. Sign up at https://razorpay.com
-  # 2. Go to Dashboard → Settings → API Keys
-  # 3. Generate Test Keys (for development) or Live Keys (for production)
-  # 4. Set environment variables before starting Spring Boot:
-  #    Windows CMD:   set RAZORPAY_KEY_ID=rzp_test_xxxx
-  #                   set RAZORPAY_KEY_SECRET=xxxx
-  #    PowerShell:    $env:RAZORPAY_KEY_ID="rzp_test_xxxx"
-  #                   $env:RAZORPAY_KEY_SECRET="xxxx"
-  # 5. OR replace the defaults above directly (not recommended for production)
 
-# ── App ───────────────────────────────────────────────────────────────────
 app:
   upload:
     dir: uploads
-    base-url: http://localhost:8080
+    base-url: http://13.60.66.231:8080
   frontend:
-    url: http://localhost:3000
+    url: http://gramgo-git.vercel.app
 
-# ── Logging ───────────────────────────────────────────────────────────────
 logging:
   level:
     com.eventbooking: DEBUG
@@ -125,7 +96,6 @@ logging:
   file:
     name: logs/gramgo.log
 
-# ── Actuator ──────────────────────────────────────────────────────────────
 management:
   health:
     redis:
@@ -137,4 +107,3 @@ management:
   endpoint:
     health:
       show-details: when-authorized
-
