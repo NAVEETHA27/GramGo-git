@@ -109,7 +109,7 @@ public class NotificationService {
         if (active != null) active.remove(emitter);
     }
 
-    /** Notify all attendees of an event update */
+    /** Notify all active renters when a vehicle listing is updated */
     @Async
     public void notifyEventUpdate(Event event) {
         bookingRepository.findByOrganizerEvents(event.getOrganizer().getId(),
@@ -120,12 +120,12 @@ public class NotificationService {
                         && b.getBookingStatus() == Booking.BookingStatus.CONFIRMED)
                 .forEach(b -> sendNotification(
                         b.getUser().getId(), "USER",
-                        "EVENT_UPDATED", "Event Updated",
-                        event.getEventName() + " has been updated. Check the latest details.",
+                        "VEHICLE_UPDATED", "Vehicle Listing Updated",
+                        event.getEventName() + " details have been updated. Please check the latest information.",
                         "/events/" + event.getId()));
     }
 
-    /** Notify all attendees of event cancellation */
+    /** Notify all active renters when a vehicle listing is cancelled */
     @Async
     public void notifyEventCancellation(Event event) {
         bookingRepository.findByOrganizerEvents(event.getOrganizer().getId(),
@@ -136,8 +136,8 @@ public class NotificationService {
                         && b.getBookingStatus() == Booking.BookingStatus.CONFIRMED)
                 .forEach(b -> sendNotification(
                         b.getUser().getId(), "USER",
-                        "EVENT_CANCELLED", "Event Cancelled",
-                        event.getEventName() + " has been cancelled. A refund will be processed.",
+                        "RENTAL_CANCELLED", "Rental Cancelled",
+                        event.getEventName() + " rental has been cancelled. A full refund will be processed.",
                         "/bookings"));
     }
 }

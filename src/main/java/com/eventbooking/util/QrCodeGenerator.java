@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Generates QR code PNG images for ticket IDs.
+ * Generates QR code PNG images for vehicle rental booking IDs.
  */
 @Component
 @Slf4j

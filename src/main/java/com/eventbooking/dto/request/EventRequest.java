@@ -11,16 +11,16 @@ import java.time.LocalTime;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class EventRequest {
 
-    @NotBlank(message = "Event name is required")
+    @NotBlank(message = "Vehicle title is required")
     @Size(min = 3, max = 200)
     private String eventName;
 
     private String description;
 
-    @NotBlank(message = "Category is required")
+    @NotBlank(message = "Vehicle category is required")
     private String category;
 
-    @NotBlank(message = "Event type is required")
+    @NotBlank(message = "Transmission type is required")
     private String eventType;
 
     private String priority;
@@ -36,14 +36,14 @@ public class EventRequest {
     @NotBlank(message = "Licence number is required")
     private String licenceNumber;
 
-    // Vehicle make/model are mapped from the legacy event columns.
+    // Brand stored in collegeName, model in departmentName (legacy field mapping)
     private String collegeName;
     private String departmentName;
 
-    @NotNull(message = "Event date is required")
+    @NotNull(message = "Listing date is required")
     private LocalDate eventDate;
 
-    @NotNull(message = "Event time is required")
+    @NotNull(message = "Listing time is required")
     private LocalTime eventTime;
 
     private LocalDate endDate;
@@ -55,11 +55,11 @@ public class EventRequest {
     private String googleMapsUrl;
 
     @DecimalMin(value = "0.00", message = "Price cannot be negative")
-    @NotNull(message = "Ticket price is required")
+    @NotNull(message = "Rental price per day is required")
     private BigDecimal ticketPrice;
 
-    @Min(value = 1, message = "Total seats must be at least 1")
-    @NotNull(message = "Total seats is required")
+    @Min(value = 1, message = "Fleet quantity must be at least 1")
+    @NotNull(message = "Fleet quantity is required")
     private Integer totalSeats;
 
     private String tags;

@@ -28,8 +28,8 @@ import { MdVerified, MdBusiness } from 'react-icons/md';
 
 /* ─── Validation ──────────────────────────────────────────── */
 const profileSchema = yup.object({
-  organizerName:    yup.string().min(2).max(120).required('Organizer name is required'),
-  organizationName: yup.string().min(2).max(160).required('Organization name is required'),
+  organizerName:    yup.string().min(2).max(120).required('Full name is required'),
+  organizationName: yup.string().min(2).max(160).required('Fleet / company name is required'),
   phone:       yup.string().transform(v=>v||null).nullable()
                    .test('phone','Invalid phone number',v=>!v||/^[+]?[0-9]{7,15}$/.test(v)),
   address:     yup.string().max(300).nullable().transform(v=>v||null),
@@ -211,7 +211,7 @@ function ProfileTab({ profile, refetch }) {
                   <FiAlertTriangle className="w-3.5 h-3.5"/> Unverified
                 </span>
             }
-            <span className="badge badge-red text-[10px]">ORGANIZER</span>
+            <span className="badge badge-red text-[10px]">FLEET OWNER</span>
           </div>
         </div>
       </div>
@@ -221,15 +221,15 @@ function ProfileTab({ profile, refetch }) {
         <div className="bg-white rounded-2xl p-6 border border-red-100 space-y-5"
           style={{ boxShadow: '0 4px 20px rgba(198,40,40,0.08)' }}>
           <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-            <FiEdit3 className="w-4 h-4 text-red-400" /> Organization Details
+            <FiEdit3 className="w-4 h-4 text-red-400" /> Fleet Owner Details
           </h3>
 
           <div className="grid sm:grid-cols-2 gap-5">
-            <Field label="Organizer Name" icon={<FiUser/>} error={errors.organizerName?.message}>
-              <input {...register('organizerName')} placeholder="Your name" className="input-field" />
+            <Field label="Full Name" icon={<FiUser/>} error={errors.organizerName?.message}>
+              <input {...register('organizerName')} placeholder="Your full name" className="input-field" />
             </Field>
-            <Field label="Organization Name" icon={<MdBusiness/>} error={errors.organizationName?.message}>
-              <input {...register('organizationName')} placeholder="Company / College" className="input-field" />
+            <Field label="Fleet / Company Name" icon={<MdBusiness/>} error={errors.organizationName?.message}>
+              <input {...register('organizationName')} placeholder="Your fleet or company name" className="input-field" />
             </Field>
           </div>
 
@@ -243,12 +243,12 @@ function ProfileTab({ profile, refetch }) {
           </div>
 
           <Field label="Address" icon={<FiMapPin/>} error={errors.address?.message}>
-            <input {...register('address')} placeholder="Office / College address" className="input-field" />
+            <input {...register('address')} placeholder="Office / business address" className="input-field" />
           </Field>
 
           <Field label="Description" error={errors.description?.message}>
             <textarea {...register('description')} rows={3}
-              placeholder="Tell participants about your organization…"
+              placeholder="Tell renters about your fleet and services…"
               className="input-field resize-none" />
           </Field>
 
@@ -313,8 +313,8 @@ function SecurityTab() {
         <div>
           <h3 className="font-bold text-slate-900 text-sm">Account Security</h3>
           <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-            Passwords are BCrypt-hashed. Your organizer token carries ROLE_ORGANIZER and cannot
-            access user or admin endpoints. All tokens expire in 15 minutes.
+            Passwords are BCrypt-hashed. Your fleet owner token carries ROLE_ORGANIZER and cannot
+            access renter or admin endpoints. All tokens expire in 15 minutes.
           </p>
         </div>
       </div>
@@ -366,9 +366,9 @@ function SecurityTab() {
         <div className="flex items-center gap-3">
           <FiCheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
           <div>
-            <p className="text-sm font-semibold text-green-800">Active Organizer Session</p>
+            <p className="text-sm font-semibold text-green-800">Active Fleet Owner Session</p>
             <p className="text-xs text-green-600">
-              Authenticated as ORGANIZER. Token auto-refreshes silently.
+              Authenticated as FLEET OWNER. Token auto-refreshes silently.
             </p>
           </div>
         </div>

@@ -5,8 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Generates human-readable unique ticket IDs.
- * Format: EVT-YYYYMMDD-XXXXXXXX  (e.g. EVT-20240615-A3F9B2C1)
+ * Generates human-readable unique booking IDs for vehicle rentals.
+ * Format: BKG-YYYYMMDD-XXXXXXXX  (e.g. BKG-20240615-A3F9B2C1)
  */
 public final class TicketIdGenerator {
 
@@ -23,6 +23,6 @@ public final class TicketIdGenerator {
                         (sb, i) -> sb.append(CHARS.charAt(i)),
                         StringBuilder::append)
                 .toString();
-        return "EVT-" + date + "-" + segment;
+        return "BKG-" + date + "-" + segment;
     }
 }

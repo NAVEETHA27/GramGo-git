@@ -58,7 +58,7 @@ export default function PaymentHistory() {
           <div className="relative flex-1 min-w-[200px]">
             <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"/>
             <input value={search} onChange={e=>setSearch(e.target.value)}
-              placeholder="Search by payment ID, event, transaction…"
+              placeholder="Search by payment ID, vehicle, transaction…"
               className="input-field pl-10 text-sm"/>
           </div>
           <motion.button whileTap={{scale:0.95}} onClick={() => setShowFilter(!showFilter)}
@@ -95,7 +95,7 @@ export default function PaymentHistory() {
 
           {/* Desktop header */}
           <div className="hidden lg:grid grid-cols-[1.8fr_2fr_1.2fr_1fr_1fr_1.2fr] gap-4 px-5 py-3 bg-teal-50 border-b border-teal-100 text-[11px] font-bold uppercase tracking-widest text-teal-500">
-            <div>Payment ID</div><div>Transaction ID / Event</div>
+            <div>Payment ID</div><div>Transaction ID / Vehicle</div>
             <div>Date</div><div>Method</div><div>Amount</div><div>Status</div>
           </div>
 

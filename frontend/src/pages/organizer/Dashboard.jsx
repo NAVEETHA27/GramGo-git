@@ -143,7 +143,7 @@ export default function FleetOwnerDashboard() {
                   <tr key={vehicle.id}>
                     <td className="max-w-xs truncate font-semibold text-slate-950">{vehicle.eventName}</td>
                     <td><span className="badge badge-teal text-[10px]">{vehicle.category?.replace(/_/g, ' ')}</span></td>
-                    <td className="text-slate-500">Rs.{Number(vehicle.ticketPrice || 0).toLocaleString()}</td>
+                    <td className="text-slate-500">Rs.{Number(vehicle.ticketPrice || 0).toLocaleString()}/day</td>
                     <td className="text-slate-500">{vehicle.availableSeats}/{vehicle.totalSeats}</td>
                     <td><span className={`badge ${STATUS_BADGE[vehicle.status] || 'badge-gray'}`}>{vehicle.status}</span></td>
                     <td>

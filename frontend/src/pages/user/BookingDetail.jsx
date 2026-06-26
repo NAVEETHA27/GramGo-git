@@ -41,12 +41,13 @@ export default function BookingDetail() {
             <code className="text-sm bg-teal-50 text-teal-700 px-4 py-2 rounded-xl mt-4 font-mono border border-teal-100">
               {b.ticketId}
             </code>
+            <p className="text-xs text-gray-400 mt-1">Booking Reference</p>
             <span className={`badge mt-3 ${b.bookingStatus === 'CONFIRMED' ? 'badge-green' : 'badge-red'}`}>
               {b.bookingStatus}
             </span>
           </div>
 
-          {/* Event info */}
+          {/* Vehicle info */}
           <div className="space-y-3">
             <h2 className="text-xl font-bold text-slate-900">{b.event?.eventName}</h2>
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-500">

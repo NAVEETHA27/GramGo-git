@@ -11,7 +11,7 @@ const EMPTY_OTP = ['', '', '', '', '', ''];
 
 const ROLE_THEME = {
   user: {
-    label: 'User account',
+    label: 'Renter account',
     accent: '#0F766E',
     accentAlt: '#14B8A6',
     bg: 'linear-gradient(135deg,#F0FDFA 0%,#F8FBFF 58%,#EAF0FA 100%)',
@@ -22,7 +22,7 @@ const ROLE_THEME = {
     dashboard: '/dashboard',
   },
   organizer: {
-    label: 'Organizer account',
+    label: 'Fleet Owner account',
     accent: '#C62828',
     accentAlt: '#D32F2F',
     bg: 'linear-gradient(135deg,#FFEBEE 0%,#FFF8F8 58%,#FFF1F1 100%)',

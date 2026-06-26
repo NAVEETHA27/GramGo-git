@@ -29,8 +29,8 @@ const userSchema = yup.object({
 });
 
 const orgSchema = yup.object({
-  organizerName:    yup.string().min(2).required('Organizer name is required'),
-  organizationName: yup.string().min(2).required('Organization name is required'),
+  organizerName:    yup.string().min(2).required('Full name is required'),
+  organizationName: yup.string().min(2).required('Fleet / company name is required'),
   email:            yup.string().email('Invalid email').required('Email is required'),
   password:         yup.string().matches(PW, PW_MSG).required('Password is required'),
   phone:            yup.string().matches(/^[+]?[0-9]{7,15}$/, 'Invalid phone').nullable().optional(),
@@ -387,7 +387,7 @@ export default function Register() {
                   )}
 
                   <Field label="Email Address" icon={<FiMail/>} error={errors.email?.message} accent={t.accent}>
-                    <input {...register('email')} type="email" placeholder="you@college.edu"
+                    <input {...register('email')} type="email" placeholder="your@email.com"
                       style={inputStyle(!!errors.email)}
                       onFocus={onFocus} onBlur={e => onBlur(e, !!errors.email)} />
                   </Field>

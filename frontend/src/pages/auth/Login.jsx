@@ -205,7 +205,7 @@ export default function Login(){
                       <label className="block text-sm font-semibold mb-1.5" style={{color:t.labelColor}}>Email Address</label>
                       <div className="relative">
                         <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none" style={{color:`${t.accent}80`}}/>
-                        <input {...register('email')} type="email" placeholder="you@college.edu"
+                        <input {...register('email')} type="email" placeholder="your@email.com"
                           className="w-full pl-11 pr-4 py-3 rounded-xl text-sm outline-none transition-all"
                           style={{background:t.inputBg,border:`1.5px solid ${errors.email?'#EF5350':t.inputBorder}`,color:'#134E4A'}}
                           onFocus={onFocus} onBlur={e=>onBlur(e,!!errors.email)}/>

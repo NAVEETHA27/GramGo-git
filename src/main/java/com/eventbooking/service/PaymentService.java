@@ -208,8 +208,8 @@ public class PaymentService {
             payment.setGatewayReference("GW-" + UUID.randomUUID().toString().substring(0, 12).toUpperCase());
         }
         paymentRepository.save(payment);
-        notificationService.sendNotification(userId, "USER", "PAYMENT_SUCCESSFUL", "Payment successful",
-                "Your payment is complete and ticket is confirmed.", "/bookings/" + bookingId);
+        notificationService.sendNotification(userId, "USER", "PAYMENT_SUCCESSFUL", "Payment Successful",
+                "Your payment is complete and vehicle rental is confirmed.", "/bookings/" + bookingId);
         try {
             emailService.sendBookingConfirmation(booking.getUser().getEmail(), booking.getUser().getName(), booking, booking.getEvent());
         } catch (RuntimeException ex) {

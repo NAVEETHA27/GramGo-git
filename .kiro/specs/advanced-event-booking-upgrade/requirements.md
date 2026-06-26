@@ -1,12 +1,12 @@
-# Requirements Document
+﻿# Requirements Document
 
 ## Introduction
 
-This document specifies 13 advanced feature upgrades for the existing Spring Boot 3.2.5 + React 18 college event booking system. The existing system (documented in the `college-event-booking-upgrade` spec) already implements JWT authentication, RBAC (USER/ORGANIZER/ADMIN roles), event CRUD, basic booking/payment models, SSE notifications infrastructure, audit logging, and a React frontend with Tailwind CSS. This upgrade builds on that foundation to deliver: FAQ & Help Center with video tutorials, complete payment and refund management lifecycle, unique human-readable IDs, enriched registration with location data, high-traffic booking queue with pessimistic locking, admin event approval workflow, an admin dashboard, enhanced profile pages, real-time SSE notifications, email notifications, QR-coded tickets with check-in deduplication, and an audit log UI.
+This document specifies 13 advanced feature upgrades for the existing Spring Boot 3.2.5 + React 18 vehicle rental system. The existing system (documented in the `vehicle-rental-upgrade` spec) already implements JWT authentication, RBAC (USER/ORGANIZER/ADMIN roles), event CRUD, basic booking/payment models, SSE notifications infrastructure, audit logging, and a React frontend with Tailwind CSS. This upgrade builds on that foundation to deliver: FAQ & Help Center with video tutorials, complete payment and refund management lifecycle, unique human-readable IDs, enriched registration with location data, high-traffic booking queue with pessimistic locking, admin event approval workflow, an admin dashboard, enhanced profile pages, real-time SSE notifications, email notifications, QR-coded tickets with check-in deduplication, and an audit log UI.
 
 ## Glossary
 
-- **System**: The full-stack college event booking application (Spring Boot 3.2.5 backend + React 18 frontend).
+- **System**: The full-stack vehicle rental application (Spring Boot 3.2.5 backend + React 18 frontend).
 - **Help_Center**: The Spring `HelpCenterService` and `HelpCenterController` managing FAQs and tutorial videos.
 - **FAQ**: A Frequently Asked Question record stored in the `faq` table with question, answer, and category fields.
 - **Tutorial_Video**: A video resource record stored in the `tutorial_videos` table with title, description, URL, and category.
@@ -14,19 +14,19 @@ This document specifies 13 advanced feature upgrades for the existing Spring Boo
 - **Refund_Service**: The Spring `RefundService` that manages the refund request and approval workflow.
 - **User_Code**: A unique human-readable identifier for users in format `U000001` (U + zero-padded 6-digit sequential number).
 - **Organizer_Code**: A unique human-readable identifier for organizers in format `OABC000001` (O + 3-letter org prefix + zero-padded 6-digit ID).
-- **Queue_Service**: The Spring service managing the `BookingQueueEntry` table for high-traffic event booking.
+- **Queue_Service**: The Spring service managing the `BookingQueueEntry` table for high-traffic Vehicle Rental.
 - **Approval_Service**: The Spring service managing the event approval workflow via the `ApprovalRequest` entity.
 - **Admin_Dashboard**: The React page at `/admin/dashboard` showing aggregate statistics for users, organizers, events, payments, refunds, and approvals.
 - **SSE_Emitter**: A Spring `SseEmitter` object held by the `NotificationService` per connected client session.
 - **Notification_Service**: The Spring `NotificationService` managing SSE emitters and persisting notifications to MongoDB.
 - **Email_Service**: The Spring `EmailService` sending transactional emails via Gmail SMTP.
-- **QR_Code**: A per-ticket QR image encoding the booking `ticketId`, used for event check-in.
+- **QR_Code**: A per-ticket QR image encoding the booking `bookingRef`, used for event check-in.
 - **Attendance**: The Spring entity recording check-in events, used to prevent duplicate QR scans.
 - **Audit_Log**: A record in the `audit_logs` table capturing actor, action, target, and timestamp for every key system action.
 - **Profile_Location**: A Spring entity storing latitude/longitude and reverse-geocoded address components for a user or organizer.
 - **Booking_Queue**: The `booking_queue` MySQL table holding queue entries with timestamps and pessimistic locking.
-- **Payment_Timeout**: The 10-minute window after queue entry reaches `PAYMENT_PENDING` status before seats are auto-released.
-- **Approval_Status**: The lifecycle of an event approval request: `PENDING` → `APPROVED` or `REJECTED` → organizer may resubmit after `MODIFICATION_REQUESTED`.
+- **Payment_Timeout**: The 10-minute window after queue entry reaches `PAYMENT_PENDING` status before units are auto-released.
+- **Approval_Status**: The lifecycle of an event approval request: `PENDING` â†’ `APPROVED` or `REJECTED` â†’ organizer may resubmit after `MODIFICATION_REQUESTED`.
 
 ---
 
@@ -126,18 +126,18 @@ This document specifies 13 advanced feature upgrades for the existing Spring Boo
 
 ### Requirement 6: High-Traffic Booking Queue
 
-**User Story:** As a user booking tickets for a high-demand event, I want to be queued fairly by request time, so that I am not unfairly displaced by concurrent requests. As a system, I want seats to be released automatically if payment is not completed within 10 minutes.
+**User Story:** As a user booking tickets for a high-demand event, I want to be queued fairly by request time, so that I am not unfairly displaced by concurrent requests. As a system, I want units to be released automatically if payment is not completed within 10 minutes.
 
 #### Acceptance Criteria
 
 1. WHEN a user submits a booking request, THE Queue_Service SHALL create a `BookingQueueEntry` with status `RECEIVED` and record the `request_timestamp` at the moment of receipt.
-2. THE Queue_Service SHALL process queue entries in ascending `request_timestamp` order using pessimistic locking (`SELECT … FOR UPDATE`) on the `events.available_seats` column to prevent double-booking.
+2. THE Queue_Service SHALL process queue entries in ascending `request_timestamp` order using pessimistic locking (`SELECT â€¦ FOR UPDATE`) on the `events.available_units` column to prevent double-booking.
 3. WHEN a queue entry begins processing, THE Queue_Service SHALL transition its status from `RECEIVED` to `PROCESSING`.
-4. WHEN available seats are confirmed for the requested quantity, THE Queue_Service SHALL decrement `events.available_seats` atomically and transition the entry status to `PAYMENT_PENDING`.
-5. WHEN `events.available_seats` is insufficient for the requested quantity, THE Queue_Service SHALL set entry status to `TICKETS_SOLD_OUT` and notify the user via SSE.
-6. WHEN a queue entry has been in `PAYMENT_PENDING` status for more than 10 minutes without a completed payment, THE System SHALL transition the entry to `EXPIRED`, restore the reserved seats to `events.available_seats`, and notify the user via SSE.
+4. WHEN available units are confirmed for the requested quantity, THE Queue_Service SHALL decrement `events.available_units` atomically and transition the entry status to `PAYMENT_PENDING`.
+5. WHEN `events.available_units` is insufficient for the requested quantity, THE Queue_Service SHALL set entry status to `TICKETS_SOLD_OUT` and notify the user via SSE.
+6. WHEN a queue entry has been in `PAYMENT_PENDING` status for more than 10 minutes without a completed payment, THE System SHALL transition the entry to `EXPIRED`, restore the reserved units to `events.available_units`, and notify the user via SSE.
 7. WHEN payment is completed successfully, THE Queue_Service SHALL transition the entry to `BOOKING_SUCCESSFUL` and create the booking record.
-8. WHEN payment fails, THE Queue_Service SHALL transition the entry to `PAYMENT_FAILED`, restore the reserved seats, and notify the user via SSE.
+8. WHEN payment fails, THE Queue_Service SHALL transition the entry to `PAYMENT_FAILED`, restore the reserved units, and notify the user via SSE.
 9. THE System SHALL expose `GET /bookings/queue-status/{requestId}` secured to `ROLE_USER` returning the current status of a queue entry.
 10. THE Frontend SHALL render a Queue Status page at `/queue-status` showing the current queue status, position indicator, and a countdown timer when in `PAYMENT_PENDING` state.
 
@@ -191,7 +191,7 @@ This document specifies 13 advanced feature upgrades for the existing Spring Boo
 3. THE user Profile_Page SHALL display and allow editing of: name, email (read-only), phone, address, city, state, country, pincode.
 4. THE user Profile_Page SHALL display a "Change Password" section with current password, new password, and confirm new password fields.
 5. WHEN the user submits the change password form, THE System SHALL verify the current password before updating to the new password hash, and return HTTP 400 with message `"Current password is incorrect"` if verification fails.
-6. THE organizer Profile_Page SHALL follow the same display and editing rules as criteria 1–5 for organizer fields, showing Organizer_Code as non-editable.
+6. THE organizer Profile_Page SHALL follow the same display and editing rules as criteria 1â€“5 for organizer fields, showing Organizer_Code as non-editable.
 7. THE Profile_Page SHALL include a "My Location" section displaying the user's last saved coordinates as a static Google Maps embed or coordinate readout.
 8. WHEN the user clicks "Detect My Location" on the profile page, THE Frontend SHALL invoke the browser Geolocation API and call `POST /profile/location` with the obtained coordinates.
 9. IF the `profile_locations` table contains no entry for the authenticated user, THE Profile_Page SHALL display a "No location saved" placeholder in the location section.
@@ -226,7 +226,7 @@ This document specifies 13 advanced feature upgrades for the existing Spring Boo
 1. THE Email_Service SHALL send a welcome email to users upon successful registration.
 2. THE Email_Service SHALL send a welcome email to organizers upon successful registration.
 3. THE Email_Service SHALL send an email verification OTP email during user and organizer registration.
-4. THE Email_Service SHALL send a booking confirmation email to users when a booking is confirmed, including event name, date, venue, ticket ID, and QR code attachment.
+4. THE Email_Service SHALL send a booking confirmation email to users when a booking is confirmed, including event name, date, venue, booking reference, and QR code attachment.
 5. THE Email_Service SHALL send a booking cancellation email to users when their booking is cancelled.
 6. THE Email_Service SHALL send a payment success email to users when payment is recorded as `SUCCESS`.
 7. THE Email_Service SHALL send a payment failure email to users when payment status is `FAILED`.
@@ -245,13 +245,13 @@ This document specifies 13 advanced feature upgrades for the existing Spring Boo
 
 #### Acceptance Criteria
 
-1. WHEN a booking is confirmed, THE System SHALL generate a QR code image encoding the booking's `ticketId` and store the image file path in `bookings.qr_code_path`.
+1. WHEN a booking is confirmed, THE System SHALL generate a QR code image encoding the booking's `bookingRef` and store the image file path in `bookings.qr_code_path`.
 2. THE System SHALL expose `GET /bookings/{bookingId}/qr-code` secured to `ROLE_USER` returning the QR code image binary (PNG) for the booking owned by the authenticated user.
-3. THE System SHALL expose `POST /attendance/check-in` secured to `ROLE_ORGANIZER` accepting `{ ticketId: String }` and performing the check-in scan.
-4. WHEN a check-in scan is received for a `ticketId` not yet used, THE System SHALL create an `Attendance` record, mark the booking as checked in, and return HTTP 200 with `{ "status": "CHECKED_IN", "ticketId": "...", "userName": "...", "eventName": "..." }`.
-5. WHEN a check-in scan is received for a `ticketId` that has already been used (duplicate), THE System SHALL return HTTP 409 with `{ "status": "DUPLICATE_SCAN", "message": "This ticket has already been used." }`.
-6. WHEN a check-in scan is received for a `ticketId` belonging to a cancelled booking, THE System SHALL return HTTP 400 with `{ "status": "INVALID_TICKET", "message": "This booking has been cancelled." }`.
-7. THE System SHALL expose `GET /attendance/event/{eventId}` secured to `ROLE_ORGANIZER` returning the full attendance list for a given event, showing each attendee's name, ticket ID, and check-in timestamp.
+3. THE System SHALL expose `POST /attendance/check-in` secured to `ROLE_ORGANIZER` accepting `{ bookingRef: String }` and performing the check-in scan.
+4. WHEN a check-in scan is received for a `bookingRef` not yet used, THE System SHALL create an `Attendance` record, mark the booking as checked in, and return HTTP 200 with `{ "status": "CHECKED_IN", "bookingRef": "...", "userName": "...", "eventName": "..." }`.
+5. WHEN a check-in scan is received for a `bookingRef` that has already been used (duplicate), THE System SHALL return HTTP 409 with `{ "status": "DUPLICATE_SCAN", "message": "This booking reference has already been used." }`.
+6. WHEN a check-in scan is received for a `bookingRef` belonging to a cancelled booking, THE System SHALL return HTTP 400 with `{ "status": "INVALID_BOOKING", "message": "This rental has been cancelled." }`.
+7. THE System SHALL expose `GET /attendance/vehicle/{vehicleId}` secured to `ROLE_ORGANIZER` returning the full attendance list for a given event, showing each attendee's name, booking reference, and check-in timestamp.
 8. THE Frontend Booking Detail page SHALL display the QR code image fetched from `GET /bookings/{bookingId}/qr-code`.
 9. THE Email_Service SHALL attach the QR code image to the booking confirmation email (Requirement 11.4).
 
@@ -267,6 +267,9 @@ This document specifies 13 advanced feature upgrades for the existing Spring Boo
 2. THE AuditService SHALL record audit entries asynchronously for all of the following actions: user registration, organizer registration, user login, organizer login, booking created, booking cancelled, payment recorded, refund requested, refund status changed, event created, event published, event cancelled, event approval reviewed, admin login, account locked, check-in recorded.
 3. THE System SHALL expose `GET /admin/audit-logs` secured to `ROLE_ADMIN` returning a paginated list of audit log entries filterable by `actor_type`, `action`, and date range, ordered by `created_at` descending.
 4. THE Admin_Dashboard audit logs section SHALL fetch from `GET /admin/audit-logs?page=0&size=50` and render a table with columns: Timestamp, Actor (ID + type), Action, Target (type + ID), Details.
-5. WHEN an audit log entry is written for a `BOOKING_CREATED` action, THE AuditService SHALL include the `ticketId` and `eventId` in the `details` field.
+5. WHEN an audit log entry is written for a `BOOKING_CREATED` action, THE AuditService SHALL include the `bookingRef` and `eventId` in the `details` field.
 6. IF the audit log write fails (e.g., database unavailable), THEN THE AuditService SHALL log the failure at WARN level and SHALL NOT propagate the exception or disrupt the primary operation.
 7. THE Audit_Log SHALL be append-only; no update or delete operations SHALL be exposed on audit log records.
+
+
+

@@ -15,12 +15,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * REST controller for ticket booking operations.
+ * REST controller for vehicle rental booking operations.
  *
- * POST   /api/bookings                   – book tickets
+ * POST   /api/bookings                   – create rental booking
  * GET    /api/bookings                   – user's booking history
  * GET    /api/bookings/{id}              – booking detail
- * GET    /api/bookings/ticket/{ticketId} – lookup by ticket ID
+ * GET    /api/bookings/ticket/{ticketId} – lookup by booking reference
  * PATCH  /api/bookings/{id}/cancel       – cancel booking
  */
 @RestController

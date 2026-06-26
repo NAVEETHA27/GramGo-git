@@ -50,7 +50,7 @@ const METHODS = [
 ];
 
 /* ─── Progress steps ──────────────────────────────────────── */
-const STEPS = ['Book Tickets', 'Payment', 'Confirm'];
+const STEPS = ['Reserve Vehicle', 'Payment', 'Confirm'];
 
 /* ─── Countdown timer hook ────────────────────────────────── */
 function useCountdown(totalSeconds) {
@@ -136,13 +136,13 @@ function OrderSummary({ booking, expanded, setExpanded }) {
           <img src={ev.eventBanner} alt={ev.eventName} className="w-full h-full object-cover"/>
           <div className="absolute inset-0" style={{background:'linear-gradient(0deg,rgba(0,0,0,0.7) 0%,transparent 60%)'}}/>
           <div className="absolute bottom-0 left-0 p-4">
-            <span className="badge badge-blue text-[10px] mb-1 block w-fit">{ev.category||'EVENT'}</span>
+            <span className="badge badge-blue text-[10px] mb-1 block w-fit">{ev.category||'VEHICLE'}</span>
             <h2 className="text-white font-extrabold text-lg leading-tight">{ev.eventName}</h2>
           </div>
         </div>
       ) : (
         <div className="px-6 pt-6">
-          <span className="badge badge-blue text-[10px] mb-1 block w-fit">{ev.category||'EVENT'}</span>
+          <span className="badge badge-blue text-[10px] mb-1 block w-fit">{ev.category||'VEHICLE'}</span>
           <h2 className="text-slate-900 font-extrabold text-xl">{ev.eventName}</h2>
         </div>
       )}
@@ -502,8 +502,8 @@ function PaymentSuccess({ booking, result, bookingId, navigate }) {
             {result?.paymentId     && <RRow label="Payment ID"    value={result.paymentId} mono/>}
             {result?.transactionId && <RRow label="Transaction ID" value={result.transactionId} mono/>}
             <RRow label="Booking ID"  value={booking?.id} mono/>
-            <RRow label="Ticket ID"   value={booking?.ticketId} mono/>
-            <RRow label="Event"       value={ev.eventName}/>
+            <RRow label="Booking Ref" value={booking?.ticketId} mono/>
+            <RRow label="Vehicle"     value={ev?.eventName}/>
             <RRow label="Amount"      value={booking?.totalAmount ? new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR'}).format(booking.totalAmount) : '—'}/>
             <RRow label="Date"        value={new Date().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}/>
           </div>

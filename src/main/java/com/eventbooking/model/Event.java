@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Entity representing a college event.
+ * Entity representing a vehicle listing.
  */
 @Entity
 @Table(name = "events", indexes = {
@@ -45,7 +45,7 @@ public class Event {
     private Organizer organizer;
 
     // ── Basic Info ────────────────────────────────────────────────────────
-    @NotBlank(message = "Event name is required")
+    @NotBlank(message = "Vehicle title is required")
     @Size(min = 3, max = 200)
     @Column(name = "event_name", nullable = false, length = 200)
     private String eventName;
@@ -69,8 +69,8 @@ public class Event {
     @Column(name = "category", nullable = false, length = 80)
     private String category;
 
-    /** ONLINE / OFFLINE / HYBRID */
-    @NotBlank(message = "Event type is required")
+    /** MANUAL / AUTOMATIC / OFFLINE */
+    @NotBlank(message = "Transmission type is required")
     @Column(name = "event_type", nullable = false, length = 30)
     private String eventType;
 
@@ -98,11 +98,11 @@ public class Event {
     private String eventImages;
 
     // ── Schedule ──────────────────────────────────────────────────────────
-    @NotNull(message = "Event date is required")
+    @NotNull(message = "Listing date is required")
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
 
-    @NotNull(message = "Event time is required")
+    @NotNull(message = "Listing time is required")
     @Column(name = "event_time", nullable = false)
     private LocalTime eventTime;
 

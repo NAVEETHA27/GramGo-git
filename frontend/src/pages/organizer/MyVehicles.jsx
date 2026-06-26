@@ -65,7 +65,7 @@ export default function MyFleet() {
                     const revenue = (rented * Number(v.ticketPrice)).toLocaleString();
                     return (
                       <tr key={v.id}>
-                        <td className="font-semibold text-slate-900 max-w-xs truncate">{v.eventName}</td>
+                        <td className="font-semibold text-slate-900 max-w-xs truncate">{v.eventName || '—'}</td>
                         <td><span className="badge badge-blue text-[10px]">{v.category?.replace(/_/g,' ')}</span></td>
                         <td className="text-gray-500 whitespace-nowrap">Rs.{Number(v.ticketPrice||0).toLocaleString()}</td>
                         <td className="text-gray-500">{rented}/{v.totalSeats}</td>

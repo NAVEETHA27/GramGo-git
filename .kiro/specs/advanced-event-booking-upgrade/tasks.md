@@ -1,8 +1,8 @@
-# Implementation Plan: Advanced Event Booking Upgrade
+﻿# Implementation Plan: Advanced Vehicle Rental Upgrade
 
 ## Overview
 
-This plan implements 13 advanced features on top of the existing Spring Boot 3.2.5 + React 18 college event booking system. The existing codebase already has entity models, service stubs, and partial controller implementations. Tasks proceed backend-first (schema → services → controllers) then frontend (API wiring → pages → UI), closing with integration checkpoints.
+This plan implements 13 advanced features on top of the existing Spring Boot 3.2.5 + React 18 vehicle rental system. The existing codebase already has entity models, service stubs, and partial controller implementations. Tasks proceed backend-first (schema â†’ services â†’ controllers) then frontend (API wiring â†’ pages â†’ UI), closing with integration checkpoints.
 
 Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 18 + Vite)** for frontend.
 
@@ -21,7 +21,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Verify `booking_queue`, `approval_requests`, `audit_logs`, `attendance` tables are complete
     - _Requirements: 4.1, 4.2, 5.2, 5.4, 1.1, 12.1, 13.1_
 
-- [ ] 2. Backend — Help Center Completion
+- [ ] 2. Backend â€” Help Center Completion
   - [~] 2.1 Complete `HelpCenterController.java` with all public and admin endpoints
     - Add `GET /help/faqs?search=&category=` (public, no auth), `GET /help/videos` (public)
     - Add `POST /admin/help/faqs`, `PUT /admin/help/faqs/{id}` secured to `ROLE_ADMIN`
@@ -35,7 +35,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - **Property 2: FAQ category filter returns only records with the matching category**
     - **Validates: Requirements 1.2, 1.3**
 
-- [ ] 3. Backend — Unique ID Generation
+- [ ] 3. Backend â€” Unique ID Generation
   - [~] 3.1 Verify and harden `AuthService.java` User_Code and Organizer_Code generation
     - Confirm `User_Code` = `"U" + String.format("%06d", user.getId())` is assigned after `saveAndFlush`
     - Confirm `Organizer_Code` = `buildOrganizerCode(orgName, id)` producing `O{3-char}{06d}` is correct
@@ -49,7 +49,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - **Property 7: For any orgName and ID, organizerCode matches regex `^O[A-Z]{3}[0-9]{6}$`**
     - **Validates: Requirements 4.1, 4.2**
 
-- [ ] 4. Backend — Payment Management Completion
+- [ ] 4. Backend â€” Payment Management Completion
   - [~] 4.1 Extend `PaymentService.java` with complete history DTO and admin query
     - Update `history(Long userId, int page, int size)` to include `eventName` in response DTO
     - Create `PaymentHistoryResponse` DTO: `paymentId`, `transactionId`, `bookingId`, `eventName`, `amount`, `paymentStatus`, `paymentMethod`, `gatewayReference`, `paidAt`
@@ -70,7 +70,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - **Property 4: Every booking transitioning to CONFIRMED creates exactly one SUCCESS payment**
     - **Validates: Requirements 2.5**
 
-- [ ] 5. Backend — Refund Management Completion
+- [ ] 5. Backend â€” Refund Management Completion
   - [~] 5.1 Complete `RefundService.java` with auto-refund and admin workflow
     - Implement `autoInitiateForEvent(Long eventId)`: fetch all CONFIRMED bookings for event, create one Refund per booking with status `INITIATED`, call `NotificationService.sendNotification()` and `EmailService.sendRefundInitiatedEmail()` per user
     - Implement `requestRefund(Long bookingId, Long userId)`: validate booking ownership, transition to `REFUND_REQUESTED`
@@ -90,10 +90,10 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Wire `EventService` cancellation method to call `refundService.autoInitiateForEvent()`
     - _Requirements: 3.3, 3.4, 3.5, 3.6_
 
-- [~] 6. Checkpoint — Core backend services complete
+- [~] 6. Checkpoint â€” Core backend services complete
   - Run `./mvnw test` to verify all existing and new backend unit tests pass. Ask the user if questions arise.
 
-- [ ] 7. Backend — Registration Location Fields
+- [ ] 7. Backend â€” Registration Location Fields
   - [~] 7.1 Verify `AuthService.java` persists location fields during registration
     - Confirm `city`, `state`, `country`, `pinCode` are accepted in `UserRegisterRequest` and `OrganizerRegisterRequest` DTOs
     - Confirm `AuthService.registerUser()` and `registerOrganizer()` map these fields onto the entity
@@ -101,11 +101,11 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Complete `ProfileLocationService.save(ownerId, ownerType, lat, lng, addressComponents)`
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.7, 5.8, 5.10_
 
-- [ ] 8. Backend — Booking Queue Hardening
+- [ ] 8. Backend â€” Booking Queue Hardening
   - [~] 8.1 Complete `BookingQueueService.java` with scheduled processing and expiry
     - Implement `enqueue(Long userId, Long eventId, int quantity)`: create `BookingQueueEntry` with `RECEIVED` status and current timestamp
-    - Implement `@Scheduled(fixedDelay=500) processQueue()`: select oldest RECEIVED entry per event using `@Lock(PESSIMISTIC_WRITE)` on Event; decrement `available_seats`; set entry to `PAYMENT_PENDING` or `TICKETS_SOLD_OUT`; send SSE notification
-    - Implement `@Scheduled(fixedDelay=60000) expireStaleEntries()`: find all `PAYMENT_PENDING` entries older than 10 minutes; set to `EXPIRED`; restore seats; send SSE
+    - Implement `@Scheduled(fixedDelay=500) processQueue()`: select oldest RECEIVED entry per event using `@Lock(PESSIMISTIC_WRITE)` on Event; decrement `available_units`; set entry to `PAYMENT_PENDING` or `TICKETS_SOLD_OUT`; send SSE notification
+    - Implement `@Scheduled(fixedDelay=60000) expireStaleEntries()`: find all `PAYMENT_PENDING` entries older than 10 minutes; set to `EXPIRED`; restore units; send SSE
     - Implement `getStatus(String requestId)`: return current queue entry DTO
     - Add `GET /bookings/queue-status/{requestId}` to `BookingController` secured to `ROLE_USER`
     - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5, 6.6, 6.7, 6.8, 6.9_
@@ -114,7 +114,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - **Property 8: Any PAYMENT_PENDING entry older than 10 minutes is always set to EXPIRED by the expiry scheduler**
     - **Validates: Requirements 6.6**
 
-- [ ] 9. Backend — Admin Approval System Completion
+- [ ] 9. Backend â€” Admin Approval System Completion
   - [~] 9.1 Create `ApprovalService.java` with full approval workflow
     - Implement `submitForApproval(Event event)`: create `ApprovalRequest` with `PENDING`; set `event.status = PENDING_APPROVAL`; notify admin via SSE
     - Implement `approve(Long approvalId, Long adminId)`: set `ApprovalRequest.status = APPROVED`; set `event.status = PUBLISHED`; notify organizer via SSE + email
@@ -134,7 +134,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Add `PUT /admin/approvals/{id}/request-modification` secured to `ROLE_ADMIN`
     - _Requirements: 7.2, 7.3, 7.4, 7.5_
 
-- [ ] 10. Backend — Admin Dashboard Service
+- [ ] 10. Backend â€” Admin Dashboard Service
   - [~] 10.1 Complete `AdminDashboardService.java` with aggregate stats
     - Implement `getStats()`: run count queries for users, organizers, events by status, payments by status, refunds by status, pending approvals
     - Return `AdminDashboardStatsResponse` DTO with all counts
@@ -143,11 +143,11 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Add `GET /admin/audit-logs?actorType=&action=&from=&to=&page=0` with filtering
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8_
 
-- [ ] 11. Backend — QR Code and Attendance
+- [ ] 11. Backend â€” QR Code and Attendance
   - [~] 11.1 Create `QRCodeService.java` using ZXing
     - Add `com.google.zxing:core:3.5.3` and `com.google.zxing:javase:3.5.3` to `pom.xml`
-    - Implement `generateQR(String ticketId)`: encode ticketId as 300x300 PNG; save to `{upload.dir}/qr/{ticketId}.png`; return file path
-    - Wire into `BookingService.confirmBooking()`: call `qrCodeService.generateQR(booking.getTicketId())` and persist path to `booking.setQrCodePath(path)`
+    - Implement `generateQR(String bookingRef)`: encode bookingRef as 300x300 PNG; save to `{upload.dir}/qr/{bookingRef}.png`; return file path
+    - Wire into `BookingService.confirmBooking()`: call `qrCodeService.generateQR(booking.getbookingRef())` and persist path to `booking.setQrCodePath(path)`
     - Add `GET /bookings/{bookingId}/qr-code` to `BookingController` secured to `ROLE_USER`; serve PNG binary response with `Content-Type: image/png`
     - _Requirements: 12.1, 12.2_
 
@@ -156,16 +156,16 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - **Validates: Requirements 12.1**
 
   - [~] 11.3 Complete `AttendanceController.java` with check-in and list endpoints
-    - Implement `POST /attendance/check-in` secured to `ROLE_ORGANIZER`: look up booking by `ticketId`; check for existing `Attendance` record; return 409 if duplicate, 400 if cancelled, 200 + create Attendance if valid
-    - Implement `GET /attendance/event/{eventId}` secured to `ROLE_ORGANIZER`: return list of attendees for the event
+    - Implement `POST /attendance/check-in` secured to `ROLE_ORGANIZER`: look up booking by `bookingRef`; check for existing `Attendance` record; return 409 if duplicate, 400 if cancelled, 200 + create Attendance if valid
+    - Implement `GET /attendance/event/{eventId}` secured to `ROLE_ORGANIZER`: return list of renters for the event
     - Wire `AuditService.record()` on successful check-in
     - _Requirements: 12.3, 12.4, 12.5, 12.6, 12.7_
 
   - [ ]* 11.4 Write property test for duplicate check-in rejection (Property 11)
-    - **Property 11: Any ticketId that has already been checked in always returns HTTP 409 on second scan**
+    - **Property 11: Any bookingRef that has already been checked in always returns HTTP 409 on second scan**
     - **Validates: Requirements 12.5**
 
-- [ ] 12. Backend — Email Service Completion
+- [ ] 12. Backend â€” Email Service Completion
   - [~] 12.1 Add all missing email template methods to `EmailService.java`
     - Add `sendBookingConfirmationEmail(User user, Booking booking, String qrCodePath)`: HTML email with event details and QR code as inline attachment
     - Add `sendBookingCancellationEmail(User user, Booking booking)`
@@ -178,9 +178,9 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Annotate all methods `@Async`; wrap SMTP calls in try-catch and log at WARN on failure
     - _Requirements: 11.1 through 11.13_
 
-- [ ] 13. Backend — Audit Service Wiring
+- [ ] 13. Backend â€” Audit Service Wiring
   - [~] 13.1 Add `AuditService.record()` calls to all key service methods
-    - `BookingService`: BOOKING_CREATED (include ticketId + eventId in details), BOOKING_CANCELLED
+    - `BookingService`: BOOKING_CREATED (include bookingRef + eventId in details), BOOKING_CANCELLED
     - `PaymentService`: PAYMENT_RECORDED
     - `RefundService`: REFUND_REQUESTED, REFUND_STATUS_CHANGED
     - `EventService`: EVENT_CREATED, EVENT_PUBLISHED, EVENT_CANCELLED
@@ -192,10 +192,10 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - **Property 12: When AuditLogRepository throws, the primary business operation still returns success**
     - **Validates: Requirements 13.6**
 
-- [~] 14. Checkpoint — Full backend complete
+- [~] 14. Checkpoint â€” Full backend complete
   - Run `./mvnw test`. All tests must pass. Fix any compilation or integration errors. Ask the user if questions arise.
 
-- [ ] 15. Frontend — Help Center Page
+- [ ] 15. Frontend â€” Help Center Page
   - [~] 15.1 Complete `frontend/src/pages/HelpCenter.jsx`
     - Fetch `GET /help/faqs` and render FAQ accordion grouped by category using Framer Motion for animation
     - Add search input at top that calls `GET /help/faqs?search=<term>` and re-renders results
@@ -204,7 +204,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Use `btn-primary`, `input-field`, `shadow-card` CSS classes
     - _Requirements: 1.8, 1.9, 1.10_
 
-- [ ] 16. Frontend — Payment History Page
+- [ ] 16. Frontend â€” Payment History Page
   - [~] 16.1 Complete `frontend/src/pages/user/PaymentHistory.jsx`
     - Fetch `GET /payments/history?page=<n>&size=10` using react-query; render paginated table
     - Columns: Transaction ID, Event, Amount, Status (badge-colored by status value), Method, Date
@@ -212,14 +212,14 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Protect route with `PrivateRoute` requiring `ROLE_USER`
     - _Requirements: 2.7, 2.8_
 
-- [ ] 17. Frontend — Refund Tracking Page
+- [ ] 17. Frontend â€” Refund Tracking Page
   - [~] 17.1 Complete `frontend/src/pages/user/RefundTracking.jsx`
     - Fetch `GET /refunds/my` and render a table with columns: Event, Amount, Status badge, Request Date
     - Status badges: INITIATED (gray), REFUND_REQUESTED (blue), APPROVED (green), REJECTED (red), COMPLETED (green)
     - Protect route with `PrivateRoute` requiring `ROLE_USER`
     - _Requirements: 3.10_
 
-- [ ] 18. Frontend — Queue Status Page
+- [ ] 18. Frontend â€” Queue Status Page
   - [~] 18.1 Complete `frontend/src/pages/user/QueueStatus.jsx`
     - Poll `GET /bookings/queue-status/{requestId}` every 3 seconds; render current status
     - When status is `PAYMENT_PENDING`, display 10-minute countdown timer
@@ -227,7 +227,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - When status is `TICKETS_SOLD_OUT` or `EXPIRED`, show error state with re-book link
     - _Requirements: 6.10_
 
-- [ ] 19. Frontend — Registration Location Fields
+- [ ] 19. Frontend â€” Registration Location Fields
   - [~] 19.1 Update `frontend/src/pages/auth/Register.jsx` with location fields and geolocation
     - Add city, state, country, pincode input fields to the registration form
     - Add "Detect My Location" button that calls `navigator.geolocation.getCurrentPosition()`
@@ -235,7 +235,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - If geolocation unavailable/denied: disable button and show info message
     - _Requirements: 5.1, 5.5, 5.6, 5.9_
 
-- [ ] 20. Frontend — Enhanced Profile Pages
+- [ ] 20. Frontend â€” Enhanced Profile Pages
   - [~] 20.1 Complete `frontend/src/pages/user/Profile.jsx` with unique ID, photo, location
     - Display `userCode` as non-editable field labeled "User ID"
     - Add profile photo upload section: POST to `PUT /users/profile-picture`; update displayed image on success without reload
@@ -250,7 +250,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Use `GET /organizer/profile` and `PUT /organizer/profile` endpoints
     - _Requirements: 9.6_
 
-- [ ] 21. Frontend — Admin Dashboard
+- [ ] 21. Frontend â€” Admin Dashboard
   - [~] 21.1 Complete `frontend/src/pages/admin/Dashboard.jsx` with all sections
     - Fetch `GET /admin/dashboard` and display metric cards: Total Users, Organizers, Events, Payments, Refunds, Pending Approvals
     - Add Users table section: fetch `GET /admin/users?page=0`; columns: User ID, Name, Email, Reg Date, Status
@@ -268,7 +268,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Show approval status on each row
     - _Requirements: 7.8_
 
-- [ ] 22. Frontend — Notifications Page and Bell Icon
+- [ ] 22. Frontend â€” Notifications Page and Bell Icon
   - [~] 22.1 Complete `frontend/src/pages/user/Notifications.jsx`
     - Fetch `GET /notifications?page=0&size=20` and render notification list
     - Visual differentiation: unread (bold, blue left-border), read (normal)
@@ -281,13 +281,13 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
     - Render bell icon with unread count badge in `Navbar.jsx`
     - _Requirements: 10.5, 10.6_
 
-- [ ] 23. Frontend — Booking Detail QR Code
+- [ ] 23. Frontend â€” Booking Detail QR Code
   - [~] 23.1 Update `frontend/src/pages/user/BookingDetail.jsx` to display QR code
     - Fetch `GET /bookings/{bookingId}/qr-code` and render as `<img>` tag
     - Show a "Download QR Code" link
     - _Requirements: 12.8_
 
-- [~] 24. Final Checkpoint — Ensure all tests pass
+- [~] 24. Final Checkpoint â€” Ensure all tests pass
   - Run `./mvnw test` (backend) and `npm run test -- --run` inside `frontend/` directory
   - Verify all admin routes require `ROLE_ADMIN`; verify QR code generation produces valid PNG files
   - Verify SSE connections open on login and close on logout
@@ -302,7 +302,7 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
 - Property tests use **jqwik 1.8.x** (add to `pom.xml` in test scope: `net.jqwik:jqwik:1.8.4`)
 - ZXing for QR codes: add `com.google.zxing:core:3.5.3` and `com.google.zxing:javase:3.5.3` to `pom.xml`
 - Nominatim reverse-geocoding is called from the browser frontend (no backend proxy needed)
-- All email methods must be `@Async` — SMTP failures must not propagate to callers
+- All email methods must be `@Async` â€” SMTP failures must not propagate to callers
 - The audit log is append-only; no DELETE or UPDATE routes should be added for audit records
 - `@Scheduled` methods in `BookingQueueService` require `@EnableScheduling` on the main application class
 
@@ -320,3 +320,5 @@ Language: **Java 17 (Spring Boot 3.2.5)** for backend, **JavaScript/JSX (React 1
   ]
 }
 ```
+
+

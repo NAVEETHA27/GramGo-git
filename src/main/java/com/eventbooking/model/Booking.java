@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Entity representing a ticket booking made by a user for an event.
+ * Entity representing a vehicle rental booking made by a user.
  */
 @Entity
 @Table(name = "bookings", indexes = {

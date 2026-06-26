@@ -52,7 +52,7 @@ export default function FleetRenters() {
               const fillRate = v.totalSeats ? Math.round((rented / v.totalSeats) * 100) : 0;
               return (
                 <tr key={v.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-5 py-4 font-medium text-gray-900 max-w-xs truncate">{v.eventName}</td>
+                  <td className="px-5 py-4 font-medium text-gray-900 max-w-xs truncate">{v.eventName || '—'}</td>
                   <td className="px-5 py-4">
                     <span className="badge badge-teal text-[10px]">{v.category?.replace(/_/g,' ')}</span>
                   </td>

@@ -10,12 +10,12 @@ import { MdDirectionsCar } from 'react-icons/md';
 const STAT_CONFIG = [
   { label: 'Total Renters',       key: 'totalUsers',        icon: FiUsers,        color: 'text-teal-600 bg-teal-50   border-teal-100'   },
   { label: 'Fleet Owners',        key: 'totalOrganizers',   icon: FiTruck,         color: 'text-violet-600 bg-violet-50 border-violet-100' },
-  { label: 'Total Listings',      key: 'totalEvents',       icon: MdDirectionsCar, color: 'text-teal-600 bg-teal-50   border-teal-100'   },
+  { label: 'Total Vehicles',      key: 'totalVehicles',     icon: MdDirectionsCar, color: 'text-blue-600 bg-blue-50   border-blue-100'   },
   { label: 'Pending Approvals',   key: 'pendingApprovals',  icon: FiAlertCircle,  color: 'text-amber-600 bg-amber-50  border-amber-100'  },
   { label: 'Total Revenue',       key: 'totalRevenue',      icon: FiDollarSign,   color: 'text-green-600 bg-green-50  border-green-100'  },
   { label: 'Refund Requests',     key: 'refundRequests',    icon: FiRefreshCw,    color: 'text-rose-600 bg-rose-50    border-rose-100'   },
-  { label: 'Active Listings',     key: 'activeEvents',      icon: FiCheckCircle,  color: 'text-emerald-600 bg-emerald-50 border-emerald-100' },
-  { label: 'Cancelled Listings',  key: 'cancelledEvents',   icon: FiXCircle,      color: 'text-red-600 bg-red-50      border-red-100'    },
+  { label: 'Active Listings',     key: 'activeListings',    icon: FiCheckCircle,  color: 'text-emerald-600 bg-emerald-50 border-emerald-100' },
+  { label: 'Cancelled Listings',  key: 'cancelledListings', icon: FiXCircle,      color: 'text-red-600 bg-red-50      border-red-100'    },
 ];
 
 const fadeUp = { initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 } };

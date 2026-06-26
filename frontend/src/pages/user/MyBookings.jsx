@@ -98,8 +98,7 @@ export default function MyRentals() {
                   <div className="flex flex-wrap items-center gap-3 text-xs">
                     <code className="bg-teal-50 text-teal-700 px-2 py-1 rounded-lg font-mono border border-teal-100">
                       {rental.ticketId}
-                    </code>
-                    <span className="text-gray-500">
+                    </code>                    <span className="text-gray-500">
                       {rental.quantity} day{rental.quantity > 1 ? 's' : ''} · Rs.{Number(rental.totalAmount).toLocaleString()}
                     </span>
                   </div>
@@ -148,6 +147,7 @@ export default function MyRentals() {
               <div className="flex justify-center mb-4">
                 <QRCodeSVG value={qrModal.ticketId} size={190} />
               </div>
+              <p className="text-xs text-gray-400 mb-1">Booking Reference</p>
               <code className="text-sm bg-teal-50 text-teal-700 px-4 py-2 rounded-xl block mb-5 font-mono border border-teal-100">
                 {qrModal.ticketId}
               </code>

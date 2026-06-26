@@ -125,7 +125,7 @@ export default function UserDashboard() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-slate-950">{rental.event?.eventName}</p>
-                      <p className="mt-0.5 font-mono text-xs text-slate-400">{rental.ticketId}</p>
+                      <p className="mt-0.5 font-mono text-xs text-slate-400">Ref: {rental.ticketId}</p>
                     </div>
                     <span className={`badge ${rental.bookingStatus === 'CONFIRMED' ? 'badge-green' : 'badge-red'}`}>
                       {rental.bookingStatus}

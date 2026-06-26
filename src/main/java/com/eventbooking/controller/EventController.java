@@ -98,7 +98,7 @@ public class EventController {
             @Valid @RequestBody EventRequest request,
             @AuthenticationPrincipal AuthPrincipal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success("Event created successfully",
+                .body(ApiResponse.success("Vehicle listing created successfully",
                         eventService.createEvent(principal.getId(), request)));
     }
 
@@ -108,7 +108,7 @@ public class EventController {
             @PathVariable Long id,
             @Valid @RequestBody EventRequest request,
             @AuthenticationPrincipal AuthPrincipal principal) {
-        return ResponseEntity.ok(ApiResponse.success("Event updated",
+        return ResponseEntity.ok(ApiResponse.success("Vehicle listing updated",
                 eventService.updateEvent(id, principal.getId(), request)));
     }
 
@@ -118,7 +118,7 @@ public class EventController {
             @PathVariable Long id,
             @AuthenticationPrincipal AuthPrincipal principal) {
         eventService.deleteEvent(id, principal.getId());
-        return ResponseEntity.ok(ApiResponse.success("Event deleted", null));
+        return ResponseEntity.ok(ApiResponse.success("Vehicle listing deleted", null));
     }
 
     @PatchMapping("/{id}/cancel")
@@ -126,7 +126,7 @@ public class EventController {
     public ResponseEntity<ApiResponse<EventResponse>> cancelEvent(
             @PathVariable Long id,
             @AuthenticationPrincipal AuthPrincipal principal) {
-        return ResponseEntity.ok(ApiResponse.success("Event cancelled",
+        return ResponseEntity.ok(ApiResponse.success("Vehicle listing cancelled",
                 eventService.cancelEvent(id, principal.getId())));
     }
 
@@ -135,7 +135,7 @@ public class EventController {
     public ResponseEntity<ApiResponse<EventResponse>> publishEvent(
             @PathVariable Long id,
             @AuthenticationPrincipal AuthPrincipal principal) {
-        return ResponseEntity.ok(ApiResponse.success("Event published",
+        return ResponseEntity.ok(ApiResponse.success("Vehicle listing published",
                 eventService.publishEvent(id, principal.getId())));
     }
 

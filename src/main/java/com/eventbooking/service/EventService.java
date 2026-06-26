@@ -85,9 +85,9 @@ public class EventService {
                 .organizer(organizer)
                 .status(ApprovalRequest.ApprovalStatus.PENDING)
                 .build());
-        auditService.record(organizerId, "ORGANIZER", "EVENT_CREATED", "EVENT",
-                String.valueOf(event.getId()), "Event submitted for approval");
-        log.info("Event created: {} by organizer {}", event.getId(), organizerId);
+        auditService.record(organizerId, "ORGANIZER", "VEHICLE_CREATED", "VEHICLE",
+                String.valueOf(event.getId()), "Vehicle listing submitted for approval");
+        log.info("Vehicle listing created: {} by fleet owner {}", event.getId(), organizerId);
         return toResponse(event);
     }
 
@@ -126,8 +126,8 @@ public class EventService {
                 .status(ApprovalRequest.ApprovalStatus.PENDING)
                 .build());
         notificationService.notifyEventUpdate(event);
-        auditService.record(organizerId, "ORGANIZER", "EVENT_EDITED", "EVENT",
-                String.valueOf(event.getId()), "Event edited and resubmitted");
+        auditService.record(organizerId, "ORGANIZER", "VEHICLE_EDITED", "VEHICLE",
+                String.valueOf(event.getId()), "Vehicle listing edited and resubmitted");
         return toResponse(eventRepository.save(event));
     }
 
@@ -136,7 +136,7 @@ public class EventService {
     @Transactional
     public void deleteEvent(Long eventId, Long organizerId) {
         eventRepository.delete(getOwnedEvent(eventId, organizerId));
-        log.info("Event deleted: {}", eventId);
+        log.info("Vehicle listing deleted: {}", eventId);
     }
 
     // ─── CANCEL ───────────────────────────────────────────────────────────
@@ -147,8 +147,8 @@ public class EventService {
         event.setStatus(Event.EventStatus.CANCELLED);
         event = eventRepository.save(event);
         notificationService.notifyEventCancellation(event);
-        auditService.record(organizerId, "ORGANIZER", "EVENT_CANCELLED", "EVENT",
-                String.valueOf(event.getId()), "Event cancelled by organizer");
+        auditService.record(organizerId, "ORGANIZER", "VEHICLE_CANCELLED", "VEHICLE",
+                String.valueOf(event.getId()), "Vehicle listing cancelled by fleet owner");
         return toResponse(event);
     }
 
@@ -161,8 +161,8 @@ public class EventService {
             throw new UnauthorizedException("Admin approval is required before publishing");
         }
         event.setStatus(Event.EventStatus.PUBLISHED);
-        auditService.record(organizerId, "ORGANIZER", "EVENT_PUBLISHED", "EVENT",
-                String.valueOf(event.getId()), "Approved event published");
+        auditService.record(organizerId, "ORGANIZER", "VEHICLE_PUBLISHED", "VEHICLE",
+                String.valueOf(event.getId()), "Approved vehicle listing published");
         return toResponse(eventRepository.save(event));
     }
 
@@ -176,22 +176,22 @@ public class EventService {
             case "APPROVE" -> {
                 event.setStatus(Event.EventStatus.APPROVED);
                 approval.setStatus(ApprovalRequest.ApprovalStatus.APPROVED);
-                notificationService.sendNotification(event.getOrganizer().getId(), "ORGANIZER", "EVENT_APPROVED",
-                        "Event approved", event.getEventName() + " has been approved. You can publish it now.", "/organizer/events");
+                notificationService.sendNotification(event.getOrganizer().getId(), "ORGANIZER", "VEHICLE_APPROVED",
+                        "Listing approved", event.getEventName() + " has been approved. You can publish it now.", "/organizer/events");
             }
             case "REJECT" -> {
                 event.setStatus(Event.EventStatus.REJECTED);
                 approval.setStatus(ApprovalRequest.ApprovalStatus.REJECTED);
                 approval.setReviewNote(reason);
-                notificationService.sendNotification(event.getOrganizer().getId(), "ORGANIZER", "EVENT_REJECTED",
-                        "Event rejected", reason != null ? reason : "Your event was rejected.", "/organizer/events");
+                notificationService.sendNotification(event.getOrganizer().getId(), "ORGANIZER", "VEHICLE_REJECTED",
+                        "Listing rejected", reason != null ? reason : "Your vehicle listing was rejected.", "/organizer/events");
             }
             case "REQUEST_MODIFICATIONS" -> {
                 event.setStatus(Event.EventStatus.REJECTED);
                 approval.setStatus(ApprovalRequest.ApprovalStatus.MODIFICATION_REQUESTED);
                 approval.setReviewNote(reason);
-                notificationService.sendNotification(event.getOrganizer().getId(), "ORGANIZER", "EVENT_MODIFICATION_REQUESTED",
-                        "Changes requested", reason != null ? reason : "Admin requested modifications.", "/organizer/events");
+                notificationService.sendNotification(event.getOrganizer().getId(), "ORGANIZER", "VEHICLE_MODIFICATION_REQUESTED",
+                        "Changes requested", reason != null ? reason : "Admin requested modifications to your listing.", "/organizer/events");
             }
             default -> throw new IllegalArgumentException("Unsupported approval decision");
         }

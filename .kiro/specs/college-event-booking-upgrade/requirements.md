@@ -1,12 +1,12 @@
-# Requirements Document
+﻿# Requirements Document
 
 ## Introduction
 
-This document specifies the complete feature upgrade for an existing Spring Boot 3.2.5 + React 18 college event booking system. The existing system has JWT authentication, role-based access (USER / ORGANIZER), event CRUD, booking/payment models, and a React frontend with Tailwind CSS. The upgrade addresses ten identified gaps: JWT hardening, stricter RBAC with an ADMIN role, landing page access control, landing page redesign, a transaction history module, profile page stability, separated role-based dashboards, database schema improvements, security enhancements, and code quality cleanup.
+This document specifies the complete feature upgrade for an existing Spring Boot 3.2.5 + React 18 vehicle rental system. The existing system has JWT authentication, role-based access (USER / ORGANIZER), event CRUD, booking/payment models, and a React frontend with Tailwind CSS. The upgrade addresses ten identified gaps: JWT hardening, stricter RBAC with an ADMIN role, landing page access control, landing page redesign, a transaction history module, profile page stability, separated role-based dashboards, database schema improvements, security enhancements, and code quality cleanup.
 
 ## Glossary
 
-- **System**: The full-stack college event booking application (Spring Boot backend + React frontend).
+- **System**: The full-stack vehicle rental application (Spring Boot backend + React frontend).
 - **Auth_Service**: The Spring Boot `AuthService` class that handles registration, login, email verification, and password reset.
 - **JWT_Provider**: The `JwtTokenProvider` Spring component that issues, signs, and validates JWT access and refresh tokens.
 - **Auth_Filter**: The `JwtAuthenticationFilter` Spring Security filter that intercepts every HTTP request and validates the bearer token.
@@ -34,7 +34,7 @@ This document specifies the complete feature upgrade for an existing Spring Boot
 
 ## Requirements
 
-### Requirement 1: JWT Hardening — Access Token Expiry and Automatic Logout
+### Requirement 1: JWT Hardening â€” Access Token Expiry and Automatic Logout
 
 **User Story:** As a registered user or organizer, I want to be automatically signed out when my session expires, so that my account is protected if I leave the browser unattended.
 
@@ -51,7 +51,7 @@ This document specifies the complete feature upgrade for an existing Spring Boot
 
 ---
 
-### Requirement 2: Role-Based Access Control — ADMIN Role and Organizer Isolation
+### Requirement 2: Role-Based Access Control â€” ADMIN Role and Organizer Isolation
 
 **User Story:** As a platform administrator, I want a dedicated ADMIN role with protected endpoints, so that I can manage users and organizers without interfering with their separate portals.
 
@@ -93,7 +93,7 @@ This document specifies the complete feature upgrade for an existing Spring Boot
 3. WHEN a user submits the search form on the Landing_Page, THE Landing_Page SHALL navigate to `/events` with `keyword` and `collegeName` as URL query parameters.
 4. THE Landing_Page SHALL render a Stats section displaying at minimum four platform statistics: total events hosted, total students reached, number of colleges, and satisfaction rate.
 5. THE Landing_Page SHALL render a Two-Mode section with separate cards for students (linking to `/register`) and organizers (linking to `/register?role=organizer`).
-6. THE Landing_Page SHALL render a Categories section displaying at minimum eight college event categories, each as a clickable chip that navigates to `/events?category=<value>`.
+6. THE Landing_Page SHALL render a Categories section displaying at minimum eight vehicle rental categories, each as a clickable chip that navigates to `/events?category=<value>`.
 7. THE Landing_Page SHALL render a Featured Events section showing up to eight upcoming public events fetched from `GET /events`.
 8. THE Landing_Page SHALL render a CTA section with a button linking to `/register?role=organizer`.
 9. THE Home_Page (`Home.jsx`) SHALL be removed from the project. THE App_Router SHALL no longer reference `Home.jsx` in any route definition.
@@ -107,7 +107,7 @@ This document specifies the complete feature upgrade for an existing Spring Boot
 
 #### Acceptance Criteria
 
-1. THE System SHALL define a `Transaction` JPA entity with fields: `id` (auto-increment), `txnId` (VARCHAR 60, unique, not null), `amount` (DECIMAL 10,2, not null), `paymentStatus` (enum: `PENDING`, `SUCCESS`, `FAILED`), `paymentDate` (DATETIME), `user` (FK → users.id), `event` (FK → events.id).
+1. THE System SHALL define a `Transaction` JPA entity with fields: `id` (auto-increment), `txnId` (VARCHAR 60, unique, not null), `amount` (DECIMAL 10,2, not null), `paymentStatus` (enum: `PENDING`, `SUCCESS`, `FAILED`), `paymentDate` (DATETIME), `user` (FK â†’ users.id), `event` (FK â†’ events.id).
 2. WHEN a new Transaction is persisted, THE System SHALL generate `txnId` in the format `TXN-<UUID>` before saving.
 3. THE System SHALL expose `GET /transactions` returning a paginated list of Transaction records belonging to the authenticated `ROLE_USER`, ordered by `paymentDate` descending.
 4. THE System SHALL expose `GET /organizer/transactions` returning a paginated list of Transaction records for all events owned by the authenticated `ROLE_ORGANIZER`, ordered by `paymentDate` descending.
@@ -131,7 +131,7 @@ This document specifies the complete feature upgrade for an existing Spring Boot
 3. THE Profile_Page SHALL access all profile fields using null-safe expressions (optional chaining or explicit null checks) before rendering.
 4. WHEN a user submits the profile update form, THE Profile_Page SHALL disable the submit button and display a loading indicator until the API responds.
 5. WHEN the profile picture upload succeeds, THE Profile_Page SHALL update the displayed avatar without requiring a full page reload.
-6. THE Organizer Profile_Page SHALL follow the same null-safety, loading-state, and Error_Boundary rules specified in criteria 1–5 of this requirement.
+6. THE Organizer Profile_Page SHALL follow the same null-safety, loading-state, and Error_Boundary rules specified in criteria 1â€“5 of this requirement.
 7. THE System SHALL provide `GET /organizer/profile` and `PUT /organizer/profile` endpoints that return and accept organizer profile fields including: `organizerName`, `organizationName`, `email`, `phone`, `address`, `website`, `description`, `organizationLogo`.
 
 ---
@@ -145,7 +145,7 @@ This document specifies the complete feature upgrade for an existing Spring Boot
 1. THE User_Dashboard SHALL display four sections: registered events list, upcoming events list, transaction history summary (latest 5 entries), and unread notifications count.
 2. THE User_Dashboard SHALL fetch registered events from `GET /bookings` and SHALL display each booking's event name, date, status, and a link to the booking detail page.
 3. THE User_Dashboard SHALL fetch unread notification count from `GET /notifications/unread` and SHALL display it as a badge.
-4. THE Organizer_Dashboard SHALL display four metric cards: Total Events, Total Revenue (summed from Payment records), Active Events count, and Total Attendees count.
+4. THE Organizer_Dashboard SHALL display four metric cards: Total Events, Total Revenue (summed from Payment records), Active Events count, and Total renters count.
 5. THE Organizer_Dashboard SHALL render a Revenue chart showing daily revenue for the last 30 days, fetched from `GET /organizer/dashboard`.
 6. THE Organizer_Dashboard SHALL render a recent events table showing event name, category, date, seat availability, and status.
 7. WHEN the Organizer_Dashboard data is loading, THE Organizer_Dashboard SHALL display Spinner components in place of each section's content.
@@ -160,7 +160,7 @@ This document specifies the complete feature upgrade for an existing Spring Boot
 
 #### Acceptance Criteria
 
-1. THE schema.sql file SHALL include a `CREATE TABLE IF NOT EXISTS transactions` statement with columns: `id`, `txn_id`, `amount`, `payment_status`, `payment_date`, `user_id` (FK → users.id), `event_id` (FK → events.id), `created_at`.
+1. THE schema.sql file SHALL include a `CREATE TABLE IF NOT EXISTS transactions` statement with columns: `id`, `txn_id`, `amount`, `payment_status`, `payment_date`, `user_id` (FK â†’ users.id), `event_id` (FK â†’ events.id), `created_at`.
 2. THE `transactions.user_id` foreign key SHALL reference `users.id` with `ON DELETE CASCADE`.
 3. THE `transactions.event_id` foreign key SHALL reference `events.id` with `ON DELETE CASCADE`.
 4. THE `transactions.txn_id` column SHALL have a `UNIQUE` index named `idx_txn_id`.
@@ -195,9 +195,11 @@ This document specifies the complete feature upgrade for an existing Spring Boot
 
 1. THE `Home.jsx` file SHALL be deleted from the project and SHALL NOT be importable or routable from any component.
 2. THE App_Router SHALL import and render only `Landing.jsx` for the `/` route; no references to `Home.jsx` SHALL exist in `App.jsx`.
-3. THE `organizer/CreateEvent.jsx` page SHALL render a form with fields for event name, description, category, event type, date, time, venue, ticket price, total seats, visibility, and banner upload.
+3. THE `organizer/CreateEvent.jsx` page SHALL render a form with fields for event name, description, category, event type, date, time, venue, ticket price, total units, visibility, and banner upload.
 4. THE `organizer/EditEvent.jsx` page SHALL pre-populate all form fields with the existing event data fetched from `GET /events/:id` and SHALL submit changes via `PUT /events/:id`.
-5. THE `organizer/Attendees.jsx` page SHALL display a paginated table of all attendees across the organizer's events, showing attendee name, email, event name, booking date, and booking status.
+5. THE `organizer/renters.jsx` page SHALL display a paginated table of all renters across the organizer's events, showing attendee name, email, event name, booking date, and booking status.
 6. THE `organizer/Profile.jsx` page SHALL render the organizer's profile details and follow the same null-safety and Error_Boundary rules specified in Requirement 6.
 7. THE entire frontend SHALL use the light theme defined in `index.css`; no component SHALL apply a dark background (`#111`, `#1a1a1a`, `bg-gray-900`, `bg-black`, or equivalent) as a page-level background.
 8. THE `index.css` file SHALL define all shared utility classes (`btn-primary`, `input-field`, `badge`, `badge-green`, `badge-red`, `badge-yellow`, `badge-blue`, `badge-gray`, `shadow-card`, `data-table`, `section-title`) that are referenced across components.
+
+

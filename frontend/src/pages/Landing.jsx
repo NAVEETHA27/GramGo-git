@@ -224,7 +224,7 @@ export default function Landing() {
             <h2>Two clear paths, one seamless rental flow.</h2>
           </Reveal>
           <div className="mt-9 grid gap-5 lg:grid-cols-2">
-            <Reveal className="role-card role-card-student">
+            <Reveal className="role-card role-card-renter">
               <div className="role-icon"><FiUsers /></div>
               <h3>Renters</h3>
               <p>Browse vehicles, compare options, confirm a booking, and return to your dashboard for rental history.</p>
@@ -232,7 +232,7 @@ export default function Landing() {
                 Start browsing <FiArrowRight />
               </Link>
             </Reveal>
-            <Reveal className="role-card role-card-organizer">
+            <Reveal className="role-card role-card-fleetowner">
               <div className="role-icon"><FiKey /></div>
               <h3>Fleet Owners</h3>
               <p>List your vehicles, set pricing and availability, then manage bookings and renters in the same system.</p>

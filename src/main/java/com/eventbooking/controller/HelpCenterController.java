@@ -26,7 +26,7 @@ public class HelpCenterController {
         return ApiResponse.success(Map.of(
                 "faqs", helpCenterService.faqs(search, category),
                 "videos", helpCenterService.videos(),
-                "contactSupport", Map.of("email", "support@eventbooking.local", "hours", "Mon-Fri 09:00-18:00")
+                "contactSupport", Map.of("email", "support@vehiclerent.com", "hours", "Mon-Sat 09:00-18:00")
         ));
     }
 

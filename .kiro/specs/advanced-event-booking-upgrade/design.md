@@ -1,8 +1,8 @@
-# Design Document: Advanced Event Booking Upgrade
+﻿# Design Document: Advanced Vehicle Rental Upgrade
 
 ## Overview
 
-This design describes the implementation of 13 advanced features on top of the existing Spring Boot 3.2.5 + React 18 college event booking system. The existing codebase already has most entity models, service stubs, and controller skeletons in place (visible in the `model/`, `service/`, and `controller/` packages). This design focuses on completing, wiring, and hardening those partial implementations, adding the missing UI pages, and connecting all pieces into a cohesive system.
+This design describes the implementation of 13 advanced features on top of the existing Spring Boot 3.2.5 + React 18 vehicle rental system. The existing codebase already has most entity models, service stubs, and controller skeletons in place (visible in the `model/`, `service/`, and `controller/` packages). This design focuses on completing, wiring, and hardening those partial implementations, adding the missing UI pages, and connecting all pieces into a cohesive system.
 
 The tech stack is unchanged: Spring Boot 3.2.5 (Java 17), MySQL via JPA/Hibernate, MongoDB for notifications, React 18 + Vite + Tailwind CSS + Framer Motion, JWT for auth, Gmail SMTP for email, and SSE for real-time push.
 
@@ -11,34 +11,34 @@ The tech stack is unchanged: Spring Boot 3.2.5 (Java 17), MySQL via JPA/Hibernat
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                        React 18 SPA                         │
-│  Pages: Help, PaymentHistory, RefundTracking, QueueStatus,  │
-│  AdminDashboard, Notifications, Profile (User/Org), Bookings│
-│  Services: api.js (Axios), EventSource (SSE)                │
-└─────────────────────────────┬───────────────────────────────┘
-                              │ HTTPS / SSE
-┌─────────────────────────────▼───────────────────────────────┐
-│              Spring Boot 3.2.5 REST API (:8080/api)         │
-│  Controllers: Auth, Event, Booking, Payment, Refund,        │
-│               HelpCenter, Admin, Notification, Attendance,  │
-│               UserProfile, OrganizerProfile                 │
-│  Services: All existing + BookingQueue, Approval, Audit     │
-│  Security: JWT filter, SecurityConfig, RateLimitFilter      │
-└──────────┬──────────────────────────────────────┬───────────┘
-           │ JPA (HikariCP)                        │ Spring Data MongoDB
-┌──────────▼──────────┐                 ┌──────────▼──────────┐
-│       MySQL 8       │                 │      MongoDB         │
-│  Tables: users,     │                 │  Collections:        │
-│  organizers, events,│                 │  notifications       │
-│  bookings, payments,│                 └─────────────────────┘
-│  refunds, audit_logs│
-│  booking_queue,     │
-│  approval_requests, │
-│  faq, tutorial_vids,│
-│  attendance,        │
-│  profile_locations  │
-└─────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                        React 18 SPA                         â”‚
+â”‚  Pages: Help, PaymentHistory, RefundTracking, QueueStatus,  â”‚
+â”‚  AdminDashboard, Notifications, Profile (User/Org), Bookingsâ”‚
+â”‚  Services: api.js (Axios), EventSource (SSE)                â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                              â”‚ HTTPS / SSE
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚              Spring Boot 3.2.5 REST API (:8080/api)         â”‚
+â”‚  Controllers: Auth, Event, Booking, Payment, Refund,        â”‚
+â”‚               HelpCenter, Admin, Notification, Attendance,  â”‚
+â”‚               UserProfile, OrganizerProfile                 â”‚
+â”‚  Services: All existing + BookingQueue, Approval, Audit     â”‚
+â”‚  Security: JWT filter, SecurityConfig, RateLimitFilter      â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+           â”‚ JPA (HikariCP)                        â”‚ Spring Data MongoDB
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                 â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚       MySQL 8       â”‚                 â”‚      MongoDB         â”‚
+â”‚  Tables: users,     â”‚                 â”‚  Collections:        â”‚
+â”‚  organizers, events,â”‚                 â”‚  notifications       â”‚
+â”‚  bookings, payments,â”‚                 â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+â”‚  refunds, audit_logsâ”‚
+â”‚  booking_queue,     â”‚
+â”‚  approval_requests, â”‚
+â”‚  faq, tutorial_vids,â”‚
+â”‚  attendance,        â”‚
+â”‚  profile_locations  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -60,7 +60,7 @@ The tech stack is unchanged: Spring Boot 3.2.5 (Java 17), MySQL via JPA/Hibernat
 | `AuditService` | existing (expand) | Async audit log writes for all key events |
 | `NotificationService` | existing (complete) | SSE emitters, MongoDB persistence, event broadcasts |
 | `EmailService` | existing (expand) | All transactional email templates |
-| `QRCodeService` | new | Generate QR PNG from ticketId, store on disk |
+| `QRCodeService` | new | Generate QR PNG from bookingRef, store on disk |
 | `AttendanceService` | new | Check-in logic, duplicate scan detection |
 | `ProfileLocationService` | existing | Lat/lng persistence in `profile_locations` |
 
@@ -150,8 +150,8 @@ CREATE TABLE IF NOT EXISTS profile_locations (
   INDEX idx_profile_loc_owner (owner_id, owner_type)
 );
 
--- booking_queue, approval_requests, audit_logs — already in schema from existing models
--- attendance — already in Attendance.java model
+-- booking_queue, approval_requests, audit_logs â€” already in schema from existing models
+-- attendance â€” already in Attendance.java model
 ```
 
 ### Key JPA Entity Summary
@@ -184,12 +184,12 @@ CREATE TABLE IF NOT EXISTS profile_locations (
 - `HelpCenterController` maps `GET /help/faqs` (public) and `GET /help/videos` (public).
 - Admin endpoints at `POST|PUT /admin/help/faqs` and `POST|PUT|DELETE /admin/help/videos` require `ROLE_ADMIN`.
 - Video file upload: multipart file stored via existing `app.upload.dir` config. File path saved in `video_url`.
-- Frontend `HelpCenter.jsx` already exists — complete accordion FAQ and video gallery rendering.
+- Frontend `HelpCenter.jsx` already exists â€” complete accordion FAQ and video gallery rendering.
 
 ### Feature 2 & 3: Payment and Refund Lifecycle
 - `PaymentService.history()` already partially implemented. Extend to return full DTO including `eventName`.
 - `RefundService.autoInitiateForEvent(Long eventId)`: fetch all confirmed bookings for event, create one Refund per booking with status `INITIATED`, notify user via SSE and email.
-- `PUT /admin/refunds/{id}/approve`: transition to `APPROVED` → `PROCESSING` → eventual `COMPLETED`. Send SSE + email.
+- `PUT /admin/refunds/{id}/approve`: transition to `APPROVED` â†’ `PROCESSING` â†’ eventual `COMPLETED`. Send SSE + email.
 - `PUT /admin/refunds/{id}/reject`: transition to `REJECTED`. Send SSE + email with reason.
 
 ### Feature 4: Unique IDs
@@ -205,8 +205,8 @@ CREATE TABLE IF NOT EXISTS profile_locations (
 
 ### Feature 6: Booking Queue
 - `BookingQueueService.enqueue()`: save `BookingQueueEntry` with status `RECEIVED` and `requestTimestamp = now()`.
-- `BookingQueueService.processNext()`: `@Scheduled(fixedDelay=500)` method. Fetch oldest `RECEIVED` entry per event using `SELECT … WHERE status='RECEIVED' ORDER BY request_timestamp LIMIT 1 FOR UPDATE`. Use `@Transactional` with pessimistic lock (`@Lock(LockModeType.PESSIMISTIC_WRITE)`) on the event row to decrement `available_seats`.
-- Timeout expiry: `@Scheduled(fixedDelay=60000)` method scans `PAYMENT_PENDING` entries older than 10 minutes, transitions to `EXPIRED`, restores seats, sends SSE.
+- `BookingQueueService.processNext()`: `@Scheduled(fixedDelay=500)` method. Fetch oldest `RECEIVED` entry per event using `SELECT â€¦ WHERE status='RECEIVED' ORDER BY request_timestamp LIMIT 1 FOR UPDATE`. Use `@Transactional` with pessimistic lock (`@Lock(LockModeType.PESSIMISTIC_WRITE)`) on the event row to decrement `available_units`.
+- Timeout expiry: `@Scheduled(fixedDelay=60000)` method scans `PAYMENT_PENDING` entries older than 10 minutes, transitions to `EXPIRED`, restores units, sends SSE.
 
 ### Feature 7: Admin Approval
 - `EventService.createEvent()`: after saving event, call `ApprovalService.submitForApproval(event)` which creates `ApprovalRequest` with `PENDING` and sets `event.status = PENDING_APPROVAL`.
@@ -240,9 +240,9 @@ CREATE TABLE IF NOT EXISTS profile_locations (
 - Exception handling: wrap SMTP calls in try-catch, log at WARN on failure.
 
 ### Feature 12: QR Codes and Attendance
-- `QRCodeService.generateQR(ticketId)`: uses ZXing library (`com.google.zxing:core`) to encode `ticketId` into a 300×300 PNG. Saves file to `{upload.dir}/qr/{ticketId}.png`. Returns the file path.
-- `BookingService.confirmBooking()`: after saving booking with `CONFIRMED` status, call `qrCodeService.generateQR(booking.getTicketId())` and update `booking.setQrCodePath(path)`.
-- `AttendanceController.checkIn(ticketId)`: look up booking by ticketId; if attendance already exists → 409; if booking cancelled → 400; else create `Attendance` record → 200.
+- `QRCodeService.generateQR(bookingRef)`: uses ZXing library (`com.google.zxing:core`) to encode `bookingRef` into a 300Ã—300 PNG. Saves file to `{upload.dir}/qr/{bookingRef}.png`. Returns the file path.
+- `BookingService.confirmBooking()`: after saving booking with `CONFIRMED` status, call `qrCodeService.generateQR(booking.getbookingRef())` and update `booking.setQrCodePath(path)`.
+- `AttendanceController.checkIn(bookingRef)`: look up booking by bookingRef; if attendance already exists â†’ 409; if booking cancelled â†’ 400; else create `Attendance` record â†’ 200.
 - `GET /bookings/{id}/qr-code`: serve the PNG file from disk as `image/png` response.
 
 ### Feature 13: Audit Log
@@ -254,7 +254,7 @@ CREATE TABLE IF NOT EXISTS profile_locations (
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+*A property is a characteristic or behavior that should hold true across all valid executions of a system â€” essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
 
 ### Property 1: FAQ search always returns only matching records
 
@@ -288,7 +288,7 @@ CREATE TABLE IF NOT EXISTS profile_locations (
 
 ### Property 6: User_Code format is always U + 6-digit zero-padded ID
 
-*For any* user with database `id` equal to N, the generated `userCode` must equal `"U" + String.format("%06d", N)` — a fixed-length 7-character string starting with U.
+*For any* user with database `id` equal to N, the generated `userCode` must equal `"U" + String.format("%06d", N)` â€” a fixed-length 7-character string starting with U.
 
 **Validates: Requirements 4.1**
 
@@ -318,7 +318,7 @@ CREATE TABLE IF NOT EXISTS profile_locations (
 
 ### Property 11: Duplicate check-in always returns HTTP 409
 
-*For any* `ticketId` that has already been successfully checked in (an `Attendance` record exists), a second check-in attempt must always return HTTP 409 with `status = "DUPLICATE_SCAN"`.
+*For any* `bookingRef` that has already been successfully checked in (an `Attendance` record exists), a second check-in attempt must always return HTTP 409 with `status = "DUPLICATE_SCAN"`.
 
 **Validates: Requirements 12.5**
 
@@ -336,13 +336,13 @@ CREATE TABLE IF NOT EXISTS profile_locations (
 |---|---|---|---|
 | Duplicate check-in | 409 | `DUPLICATE_SCAN` | "This ticket has already been used." |
 | Cancelled ticket check-in | 400 | `INVALID_TICKET` | "This booking has been cancelled." |
-| Tickets sold out | 409 | `TICKETS_SOLD_OUT` | "No seats available for this event." |
+| Tickets sold out | 409 | `TICKETS_SOLD_OUT` | "No units available for this event." |
 | Queue entry expired | 410 | `QUEUE_EXPIRED` | "Your booking window has expired. Please rebook." |
 | Incorrect current password | 400 | `WRONG_PASSWORD` | "Current password is incorrect." |
 | Refund not found | 404 | `NOT_FOUND` | "Refund record not found." |
 | Event not in approvable state | 400 | `INVALID_STATE` | "Event is not in a state that can be reviewed." |
-| Email delivery failure | — | (log only) | Logged at WARN; no exception propagated |
-| Audit log write failure | — | (log only) | Logged at WARN; no exception propagated |
+| Email delivery failure | â€” | (log only) | Logged at WARN; no exception propagated |
+| Audit log write failure | â€” | (log only) | Logged at WARN; no exception propagated |
 
 All unhandled exceptions are caught by the existing `GlobalExceptionHandler` and returned as structured JSON with `status`, `message`, `timestamp`, `path`.
 
@@ -358,20 +358,20 @@ All unhandled exceptions are caught by the existing `GlobalExceptionHandler` and
 - `AttendanceServiceTest`: verify duplicate detection using mock attendance repository.
 - `AdminDashboardServiceTest`: verify count aggregations with mock repositories.
 
-### Property-Based Tests (using QuickTheories or jqwik — jqwik is appropriate for Java 17 + JUnit 5)
+### Property-Based Tests (using QuickTheories or jqwik â€” jqwik is appropriate for Java 17 + JUnit 5)
 Each property below corresponds to a Correctness Property above. Each test uses `@Property` from jqwik with minimum 100 tries.
 
 - **Property 1**: Generate random `List<Faq>` with injected matching/non-matching records; verify search result subset.
 - **Property 2**: Generate random `List<Faq>` with varied categories; verify category filter output.
 - **Property 3**: Generate random `List<Payment>` with random `paidAt` timestamps; verify sort invariant.
 - **Property 4**: For any booking mock transitioning to CONFIRMED, verify `Payment` with `SUCCESS` is saved exactly once.
-- **Property 5**: For any event with N confirmed bookings (N ∈ [1..20]), verify exactly N `INITIATED` refunds created.
-- **Property 6**: For any integer ID N ∈ [1..999999], verify `"U" + String.format("%06d", N)` format.
+- **Property 5**: For any event with N confirmed bookings (N âˆˆ [1..20]), verify exactly N `INITIATED` refunds created.
+- **Property 6**: For any integer ID N âˆˆ [1..999999], verify `"U" + String.format("%06d", N)` format.
 - **Property 7**: For any `String orgName` and integer ID, verify code matches `^O[A-Z]{3}[0-9]{6}$`.
-- **Property 8**: For any queue entry with age > 10 min, verify expiry job sets `EXPIRED` and restores seats.
+- **Property 8**: For any queue entry with age > 10 min, verify expiry job sets `EXPIRED` and restores units.
 - **Property 9**: For any event creation, verify one `ApprovalRequest` created with `PENDING` and `event.status = PENDING_APPROVAL`.
 - **Property 10**: For any confirmed booking, verify `qrCodePath != null && !qrCodePath.isBlank()`.
-- **Property 11**: For any ticketId already checked in, second check-in always returns 409.
+- **Property 11**: For any bookingRef already checked in, second check-in always returns 409.
 - **Property 12**: Mock `AuditLogRepository` to throw; verify primary operation still returns success response.
 
 ### Integration Tests
@@ -389,6 +389,8 @@ Each property below corresponds to a Correctness Property above. Each test uses 
 ### Property Test Configuration
 - Library: **jqwik 1.8.x** (already compatible with JUnit 5 in Spring Boot 3.2.5 test scope)
 - Minimum tries per property: **100**
-- Tag format: `Feature: advanced-event-booking-upgrade, Property {N}: {short title}`
+- Tag format: `Feature: advanced-vehicle-rental-upgrade, Property {N}: {short title}`
 - Each property test is a single `@Property` annotated method
 - Optional sub-tasks in the task list are marked `*` and can be skipped for MVP
+
+

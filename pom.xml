@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>com.eventbooking</groupId>
+    <groupId>com.vehiclerental</groupId>
     <artifactId>vehicle-rental-system</artifactId>
     <version>1.0.0</version>
     <name>Vehicle Rental Booking System</name>

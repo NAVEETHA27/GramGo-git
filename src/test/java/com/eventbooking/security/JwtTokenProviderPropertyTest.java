@@ -25,7 +25,7 @@ class JwtTokenProviderPropertyTest {
             "TestSecretKeyForJwtTokenProviderPropertyTests2024!@#$",
             900_000L,
             604_800_000L,
-            "college-events"
+            "vehicle-rental"
         );
     }
 
@@ -60,7 +60,7 @@ class JwtTokenProviderPropertyTest {
     @Test
     void accessTokenHasIssClaim() {
         String token = jwtTokenProvider.generateToken(1L, "test@example.com", "USER");
-        assertEquals("college-events", jwtTokenProvider.extractIssuer(token));
+        assertEquals("vehicle-rental", jwtTokenProvider.extractIssuer(token));
     }
 
     // Property 1 (extended): Lifetime holds across multiple different users

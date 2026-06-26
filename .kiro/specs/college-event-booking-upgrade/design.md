@@ -1,10 +1,10 @@
-# Design Document: College Event Booking System Upgrade
+﻿# Design Document: Vehicle Rental System Upgrade
 
 ## Overview
 
-This document describes the technical design for upgrading the existing Spring Boot 3.2.5 + React 18 college event booking system. The upgrade hardens security (JWT rotation, account lockout, rate limiting, issuer validation), introduces a formal ADMIN role, redesigns the landing page with a college-focused theme, adds a Transaction History module, stabilises profile pages, separates USER and ORGANIZER dashboards, extends the database schema, and cleans up frontend code quality.
+This document describes the technical design for upgrading the existing Spring Boot 3.2.5 + React 18 vehicle rental system. The upgrade hardens security (JWT rotation, account lockout, rate limiting, issuer validation), introduces a formal ADMIN role, redesigns the landing page with a college-focused theme, adds a Transaction History module, stabilises profile pages, separates USER and ORGANIZER dashboards, extends the database schema, and cleans up frontend code quality.
 
-The existing codebase provides a solid foundation: `JwtTokenProvider` (jjwt 0.12.5), `JwtAuthenticationFilter`, `SecurityConfig` with stateless sessions, React 18 with `AuthContext`, `PrivateRoute`/`GuestRoute` guards, and a Tailwind + Vite frontend. All changes are additive or in-place modifications — no entities are removed, no existing APIs are broken.
+The existing codebase provides a solid foundation: `JwtTokenProvider` (jjwt 0.12.5), `JwtAuthenticationFilter`, `SecurityConfig` with stateless sessions, React 18 with `AuthContext`, `PrivateRoute`/`GuestRoute` guards, and a Tailwind + Vite frontend. All changes are additive or in-place modifications â€” no entities are removed, no existing APIs are broken.
 
 ---
 
@@ -34,7 +34,7 @@ graph TD
         BS[BookingService<br/>creates Transactions on status change]
     end
 
-    subgraph Database["MySQL (event_booking_db)"]
+    subgraph Database["MySQL (vehicle_rental_db)"]
         U[(users)]
         O[(organizers)]
         E[(events + new cols)]
@@ -68,7 +68,7 @@ graph TD
 
 ## Sequence Diagrams
 
-### JWT Hardening — Silent Token Refresh Flow
+### JWT Hardening â€” Silent Token Refresh Flow
 
 ```mermaid
 sequenceDiagram
@@ -165,7 +165,7 @@ public class JwtTokenProvider {
 ```
 
 **Responsibilities**:
-- Add `iss` claim = `${jwt.issuer}` (configurable, e.g. `"college-events"`) to every token
+- Add `iss` claim = `${jwt.issuer}` (configurable, e.g. `"vehicle-rental"`) to every token
 - Keep `expirationMs` at 15 minutes (900000 ms) and `refreshExpirationMs` at 7 days (604800000 ms)
 - Distinguish `ExpiredJwtException` from other `JwtException` types for accurate error codes
 
@@ -183,9 +183,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 ```
 
 **Responsibilities**:
-- If token is expired → write JSON response `{ "errorCode": "TOKEN_EXPIRED", "message": "Access token expired", "status": 401 }` and return (do not continue filter chain)
-- If token has wrong `iss` claim → return HTTP 401 with `errorCode: "INVALID_ISSUER"`
-- On valid token → set `SecurityContextHolder` with `AuthPrincipal(id, email, role)` as before
+- If token is expired â†’ write JSON response `{ "errorCode": "TOKEN_EXPIRED", "message": "Access token expired", "status": 401 }` and return (do not continue filter chain)
+- If token has wrong `iss` claim â†’ return HTTP 401 with `errorCode: "INVALID_ISSUER"`
+- On valid token â†’ set `SecurityContextHolder` with `AuthPrincipal(id, email, role)` as before
 
 #### 3. RefreshTokenStore (New)
 
@@ -206,7 +206,7 @@ public class RefreshTokenStore {
 - On `POST /auth/refresh-token`, verify the JTI is not already used before issuing new tokens
 - Mark the incoming JTI as used immediately after validation
 
-#### 4. AuthController (Modified — add refresh endpoint)
+#### 4. AuthController (Modified â€” add refresh endpoint)
 
 **Purpose**: Expose `POST /auth/refresh-token` for silent token rotation.
 
@@ -239,7 +239,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
 **Responsibilities**:
 - Maintain `ConcurrentHashMap<String, Bucket>` using the Bucket4j or a simple sliding-window counter
-- On `/auth/**` requests, check if IP bucket is exhausted → return HTTP 429 with message `"Too many requests"`
+- On `/auth/**` requests, check if IP bucket is exhausted â†’ return HTTP 429 with message `"Too many requests"`
 - All other paths pass through immediately
 
 #### 6. Transaction Entity + Repository + Service (New)
@@ -256,8 +256,8 @@ public class Transaction {
     BigDecimal amount;
     PaymentStatus paymentStatus;  // PENDING, SUCCESS, FAILED
     LocalDateTime paymentDate;
-    User user;              // FK → users.id
-    Event event;            // FK → events.id
+    User user;              // FK â†’ users.id
+    Event event;            // FK â†’ events.id
     LocalDateTime createdAt;
 
     public enum PaymentStatus { PENDING, SUCCESS, FAILED }
@@ -284,12 +284,12 @@ public class TransactionService {
 ```java
 @RestController
 public class TransactionController {
-    // GET /transactions?page=0&size=10  — ROLE_USER
+    // GET /transactions?page=0&size=10  â€” ROLE_USER
     @GetMapping("/transactions")
     ResponseEntity<ApiResponse<Page<TransactionResponse>>> getUserTransactions(
         @AuthenticationPrincipal AuthPrincipal principal, Pageable pageable);
 
-    // GET /organizer/transactions?page=0&size=10  — ROLE_ORGANIZER
+    // GET /organizer/transactions?page=0&size=10  â€” ROLE_ORGANIZER
     @GetMapping("/organizer/transactions")
     ResponseEntity<ApiResponse<Page<TransactionResponse>>> getOrganizerTransactions(
         @AuthenticationPrincipal AuthPrincipal principal, Pageable pageable);
@@ -308,10 +308,10 @@ public class TransactionController {
 #### 9. AuthService (Modified)
 
 **Responsibilities**:
-- On login: if `accountLocked == true` → throw `AccountLockedException` (HTTP 423)
-- On bad credentials: increment `failedLoginAttempts`; if count reaches 5 → `accountLocked = true` + send lock email; reset counter to 0 on successful login
+- On login: if `accountLocked == true` â†’ throw `AccountLockedException` (HTTP 423)
+- On bad credentials: increment `failedLoginAttempts`; if count reaches 5 â†’ `accountLocked = true` + send lock email; reset counter to 0 on successful login
 - Strip whitespace from all string inputs before processing (call `StringUtils.trimWhitespace()`)
-- Password reset: validate `resetTokenExpiry.isBefore(LocalDateTime.now())` → HTTP 400 `"Password reset token has expired"`
+- Password reset: validate `resetTokenExpiry.isBefore(LocalDateTime.now())` â†’ HTTP 400 `"Password reset token has expired"`
 
 ---
 
@@ -326,7 +326,7 @@ public class TransactionController {
 const AuthContext = {
   user,               // parsed user object | null
   loading,            // boolean
-  login(authResponse) // stores accessToken → eb_token, refreshToken → eb_refresh_token, user → eb_user
+  login(authResponse) // stores accessToken â†’ eb_token, refreshToken â†’ eb_refresh_token, user â†’ eb_user
   logout()            // clears all three keys, redirects to /login
   updateUser(updates) // partial update to eb_user
 }
@@ -354,26 +354,26 @@ const AuthContext = {
 **Responsibilities**:
 - Already wraps `/login`, `/register`, `/forgot-password`, `/reset-password`
 - Add to `/` route in `App.jsx`: `<Route path="/" element={<GuestRoute><Wrap><Landing /></Wrap></GuestRoute>} />`
-- Redirect logic: `ORGANIZER` → `/organizer/dashboard`, `USER` → `/dashboard`
-- While `loading` is true → show `<Spinner full />`
-- Add `ADMIN` redirect → `/admin/dashboard` (future-proofing)
+- Redirect logic: `ORGANIZER` â†’ `/organizer/dashboard`, `USER` â†’ `/dashboard`
+- While `loading` is true â†’ show `<Spinner full />`
+- Add `ADMIN` redirect â†’ `/admin/dashboard` (future-proofing)
 
 #### 4. Landing.jsx (Redesigned)
 
 **Purpose**: College-focused light-theme landing page with search, stats, categories, and featured events.
 
 **Sections**:
-- `HeroSection` — headline, subheadline, search form (keyword + collegeName inputs), quick-filter tags (Workshop, Seminar, Cultural, Sports, Technical…)
-- `StatsSection` — 4 stat cards (Events Hosted, Students Reached, Colleges, Satisfaction Rate)
-- `TwoModeSection` — student card (`/register`) + organizer card (`/register?role=organizer`)
-- `CategoriesSection` — 8+ clickable chips, each navigates to `/events?category=<value>`
-- `FeaturedEventsSection` — up to 8 upcoming public events from `GET /events?featured=true&size=8`, shows `<Spinner />` while loading
-- `CTASection` — "Become an Organizer" button → `/register?role=organizer`
+- `HeroSection` â€” headline, subheadline, search form (keyword + collegeName inputs), quick-filter tags (BIKE, Seminar, Cultural, Sports, Technicalâ€¦)
+- `StatsSection` â€” 4 stat cards (Events Hosted, Students Reached, Colleges, Satisfaction Rate)
+- `TwoModeSection` â€” student card (`/register`) + organizer card (`/register?role=organizer`)
+- `CategoriesSection` â€” 8+ clickable chips, each navigates to `/events?category=<value>`
+- `FeaturedEventsSection` â€” up to 8 upcoming public events from `GET /events?featured=true&size=8`, shows `<Spinner />` while loading
+- `CTASection` â€” "Become an Organizer" button â†’ `/register?role=organizer`
 
 **Color theme** (already matches Navbar):
 - Primary: `#1565C0` (blue), Accent: `#D32F2F` (red), Background: `#F0F4FF`
 
-#### 5. TransactionsPage (New — `/transactions`)
+#### 5. TransactionsPage (New â€” `/transactions`)
 
 **Purpose**: Paginated transaction history for USER role.
 
@@ -487,7 +487,7 @@ public class Transaction {
 
 **Validation Rules**:
 - `txnId` must match pattern `^TXN-[0-9a-fA-F-]{36}$`
-- `amount` must be ≥ 0
+- `amount` must be â‰¥ 0
 - `user` and `event` foreign keys must reference existing rows (cascade delete)
 
 ### Modified: Event Entity (new columns)
@@ -532,7 +532,7 @@ public record TransactionResponse(
 ## Database Schema Changes
 
 ```sql
--- ─── TRANSACTIONS (NEW) ───────────────────────────────────────────────
+-- â”€â”€â”€ TRANSACTIONS (NEW) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 CREATE TABLE IF NOT EXISTS transactions (
     id              BIGINT          PRIMARY KEY AUTO_INCREMENT,
     txn_id          VARCHAR(60)     NOT NULL UNIQUE,
@@ -550,7 +550,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     INDEX idx_txn_status (payment_status)
 );
 
--- ─── EVENTS TABLE — add new columns if not present ────────────────────
+-- â”€â”€â”€ EVENTS TABLE â€” add new columns if not present â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ALTER TABLE events
     ADD COLUMN IF NOT EXISTS college_name          VARCHAR(200)  DEFAULT NULL,
     ADD COLUMN IF NOT EXISTS department_name       VARCHAR(150)  DEFAULT NULL,
@@ -591,7 +591,7 @@ ALTER TABLE events
 
 **Condition**: Token `iss` claim does not match `${jwt.issuer}` config value.  
 **Backend Response**: HTTP 401 `{ "errorCode": "INVALID_ISSUER" }`  
-**Frontend Recovery**: Treated as a hard auth failure — `logout()` and redirect to `/login`.
+**Frontend Recovery**: Treated as a hard auth failure â€” `logout()` and redirect to `/login`.
 
 ### Error Scenario 3: Account Locked
 
@@ -625,7 +625,7 @@ ALTER TABLE events
 - **`JwtTokenProvider`**: Test that `generateToken` produces tokens that expire at exactly 15 minutes; test `isTokenExpired` distinguishes expired vs. invalid; test `iss` claim is present and matches config.
 - **`AuthService`**: Test account lockout at exactly 5 failed attempts; test successful login resets `failedLoginAttempts` to 0; test password reset token expiry check.
 - **`TransactionService`**: Test `txnId` format matches `^TXN-[0-9a-fA-F-]{36}$`; test `createTransaction` on CONFIRMED and CANCELLED booking statuses.
-- **`RateLimitFilter`**: Test requests 1–20 pass, request 21 returns 429.
+- **`RateLimitFilter`**: Test requests 1â€“20 pass, request 21 returns 429.
 
 ### Property-Based Testing Approach
 
@@ -644,7 +644,7 @@ ALTER TABLE events
 
 ### Integration Testing Approach
 
-- **JWT rotation flow**: login → get access + refresh tokens → wait for 15 min expiry (mock clock) → call protected endpoint → verify 401 TOKEN_EXPIRED → call refresh → verify new tokens → retry succeeds
+- **JWT rotation flow**: login â†’ get access + refresh tokens â†’ wait for 15 min expiry (mock clock) â†’ call protected endpoint â†’ verify 401 TOKEN_EXPIRED â†’ call refresh â†’ verify new tokens â†’ retry succeeds
 - **RBAC isolation**: test that a ROLE_USER JWT returns HTTP 403 on all `/organizer/**` paths; test that ROLE_ORGANIZER JWT returns HTTP 403 on all `/admin/**` paths
 - **Organizer event isolation**: create two organizers, each with one event; verify organizer A cannot `PUT /events/{organizer_B_event_id}`
 
@@ -655,7 +655,7 @@ ALTER TABLE events
 ### JWT Hardening
 - Access token lifetime reduced from the existing configurable value to **15 minutes** (`jwt.expiration=900000`)
 - Refresh token lifetime set to **7 days** (`jwt.refresh-expiration=604800000`)
-- Every token includes `iss` claim; the filter rejects tokens where `iss` ≠ configured issuer
+- Every token includes `iss` claim; the filter rejects tokens where `iss` â‰  configured issuer
 - Refresh token rotation: each refresh token carries a `jti` (UUID); the `RefreshTokenStore` records used JTIs to prevent replay attacks
 
 ### RBAC
@@ -682,7 +682,7 @@ ALTER TABLE events
 ### Request Size Limit
 - `application.properties`: `spring.servlet.multipart.max-request-size=5MB`, `spring.servlet.multipart.max-file-size=5MB`
 - For non-multipart bodies, add `server.tomcat.max-http-form-post-size=5MB`
-- The existing `GlobalExceptionHandler` handles `MaxUploadSizeExceededException` → HTTP 413
+- The existing `GlobalExceptionHandler` handles `MaxUploadSizeExceededException` â†’ HTTP 413
 
 ---
 
@@ -702,11 +702,11 @@ The following universally quantified properties hold across the entire upgrade. 
 
 ### JWT Token Lifetime Properties
 
-Property 1: For every access token `t` issued by `JwtTokenProvider.generateToken(...)`, the token lifetime is exactly 15 minutes — `exp(t) - iat(t) == 900000 ms`.
+Property 1: For every access token `t` issued by `JwtTokenProvider.generateToken(...)`, the token lifetime is exactly 15 minutes â€” `exp(t) - iat(t) == 900000 ms`.
 
 **Validates: Requirements 1.1**
 
-Property 2: For every refresh token `rt` issued by `JwtTokenProvider.generateRefreshToken(...)`, the token lifetime is exactly 7 days — `exp(rt) - iat(rt) == 604800000 ms`.
+Property 2: For every refresh token `rt` issued by `JwtTokenProvider.generateRefreshToken(...)`, the token lifetime is exactly 7 days â€” `exp(rt) - iat(rt) == 604800000 ms`.
 
 **Validates: Requirements 1.2**
 
@@ -722,21 +722,21 @@ Property 5: For every refresh token `rt` whose JTI is already present in `Refres
 
 **Validates: Requirements 1.7**
 
-Property 6: For every valid, never-used refresh token `rt`, `POST /auth/refresh-token` always returns `HTTP 200` with a non-null `accessToken`, a non-null `refreshToken`, and `response.refreshToken ≠ rt` (token rotated).
+Property 6: For every valid, never-used refresh token `rt`, `POST /auth/refresh-token` always returns `HTTP 200` with a non-null `accessToken`, a non-null `refreshToken`, and `response.refreshToken â‰  rt` (token rotated).
 
 **Validates: Requirements 1.6, 1.7**
 
 ### RBAC Properties
 
-Property 7: For every principal `p` where `p.role ≠ ROLE_ADMIN`, every HTTP request to any path matching `/admin/**` always returns `HTTP 403`.
+Property 7: For every principal `p` where `p.role â‰  ROLE_ADMIN`, every HTTP request to any path matching `/admin/**` always returns `HTTP 403`.
 
 **Validates: Requirements 2.2, 2.5**
 
-Property 8: For every principal `p` where `p.role ≠ ROLE_ORGANIZER`, every HTTP request to any path matching `/organizer/**` always returns `HTTP 403`.
+Property 8: For every principal `p` where `p.role â‰  ROLE_ORGANIZER`, every HTTP request to any path matching `/organizer/**` always returns `HTTP 403`.
 
 **Validates: Requirements 2.3, 2.4**
 
-Property 9: For every organizer `o` and every event `e` where `e.organizer_id ≠ o.id`, every write operation (PUT/DELETE) by `o` on event `e` always returns `HTTP 403`.
+Property 9: For every organizer `o` and every event `e` where `e.organizer_id â‰  o.id`, every write operation (PUT/DELETE) by `o` on event `e` always returns `HTTP 403`.
 
 **Validates: Requirements 2.7, 2.8**
 
@@ -788,7 +788,7 @@ Property 19: For every IP address sending more than 20 requests within any 60-se
 
 ### Profile Null-Safety Property
 
-Property 20: For every possible `profile` value (including `null`, `undefined`, and partial objects with missing fields) passed as props to `ProfileContent`, the React render never throws a `TypeError` — all field accesses use optional chaining or explicit null guards.
+Property 20: For every possible `profile` value (including `null`, `undefined`, and partial objects with missing fields) passed as props to `ProfileContent`, the React render never throws a `TypeError` â€” all field accesses use optional chaining or explicit null guards.
 
 **Validates: Requirements 6.1, 6.3**
 
@@ -797,18 +797,18 @@ Property 20: For every possible `profile` value (including `null`, `undefined`, 
 ## Dependencies
 
 ### Backend (no new Maven dependencies required)
-- `io.jsonwebtoken:jjwt-api:0.12.5` — already present; `jti` claim support is built-in
-- `org.springframework.boot:spring-boot-starter-security` — already present; security headers DSL available
-- `org.springframework.boot:spring-boot-starter-validation` — already present; used for DTO validation
-- `commons-lang3` — already present; `StringUtils.trimWhitespace()` for input sanitisation
-- Optional: `com.bucket4j:bucket4j-core` (for production-grade rate limiting) — not required for the in-memory implementation
+- `io.jsonwebtoken:jjwt-api:0.12.5` â€” already present; `jti` claim support is built-in
+- `org.springframework.boot:spring-boot-starter-security` â€” already present; security headers DSL available
+- `org.springframework.boot:spring-boot-starter-validation` â€” already present; used for DTO validation
+- `commons-lang3` â€” already present; `StringUtils.trimWhitespace()` for input sanitisation
+- Optional: `com.bucket4j:bucket4j-core` (for production-grade rate limiting) â€” not required for the in-memory implementation
 
 ### Frontend (no new npm packages required)
-- `react-query@3.39.3` — already installed; used for all new data-fetching hooks
-- `recharts@2.12.7` — already installed; used for revenue chart
-- `react-hook-form@7.51.5` + `yup@1.4.0` — already installed; used for CreateEvent/EditEvent forms
-- `framer-motion@11.2.10` — already installed; used for page animations
-- `react-icons@5.2.1` — already installed; used throughout new components
+- `react-query@3.39.3` â€” already installed; used for all new data-fetching hooks
+- `recharts@2.12.7` â€” already installed; used for revenue chart
+- `react-hook-form@7.51.5` + `yup@1.4.0` â€” already installed; used for CreateEvent/EditEvent forms
+- `framer-motion@11.2.10` â€” already installed; used for page animations
+- `react-icons@5.2.1` â€” already installed; used throughout new components
 
 ### Shared CSS Utility Classes (to be defined in `index.css`)
 
@@ -836,3 +836,5 @@ The following classes must be defined and are already referenced across componen
 .data-table    { /* full-width table with header styles */ }
 .section-title { /* page/section heading typography */ }
 ```
+
+

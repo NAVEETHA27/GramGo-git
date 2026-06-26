@@ -26,14 +26,14 @@ public class AdminDashboardService {
                 .map(Payment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return Map.of(
-                "totalUsers", userRepository.count(),
-                "totalOrganizers", organizerRepository.count(),
-                "totalEvents", eventRepository.count(),
-                "pendingApprovals", approvalRequestRepository.findByStatus(com.eventbooking.model.ApprovalRequest.ApprovalStatus.PENDING, PageRequest.of(0, 1)).getTotalElements(),
-                "totalRevenue", revenue,
-                "refundRequests", refundRepository.count(),
-                "activeEvents", eventRepository.findByStatus(Event.EventStatus.PUBLISHED).size(),
-                "cancelledEvents", eventRepository.findByStatus(Event.EventStatus.CANCELLED).size()
+                "totalUsers",        userRepository.count(),
+                "totalOrganizers",   organizerRepository.count(),
+                "totalVehicles",     eventRepository.count(),
+                "pendingApprovals",  approvalRequestRepository.findByStatus(com.eventbooking.model.ApprovalRequest.ApprovalStatus.PENDING, PageRequest.of(0, 1)).getTotalElements(),
+                "totalRevenue",      revenue,
+                "refundRequests",    refundRepository.count(),
+                "activeListings",    eventRepository.findByStatus(Event.EventStatus.PUBLISHED).size(),
+                "cancelledListings", eventRepository.findByStatus(Event.EventStatus.CANCELLED).size()
         );
     }
 }

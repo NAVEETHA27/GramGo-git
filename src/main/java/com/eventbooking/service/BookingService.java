@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * Handles ticket booking, cancellation, and booking history.
+ * Handles vehicle rental booking, cancellation, and booking history.
  */
 @Service
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ public class BookingService {
     private final QrCodeGenerator     qrCodeGenerator;
     private final AuditService auditService;
 
-    // ─── BOOK TICKETS ─────────────────────────────────────────────────────
+    // ─── CREATE RENTAL BOOKING ────────────────────────────────────────────
 
     @Transactional
     public BookingResponse bookTickets(Long userId, BookingRequest request) {
@@ -61,8 +61,8 @@ public class BookingService {
                 || event.getStatus() == Event.EventStatus.COMPLETED
                 || event.getStatus() != Event.EventStatus.PUBLISHED) {
             queueEntry.setBookingStatus(BookingQueueEntry.QueueStatus.FAILED);
-            queueEntry.setMessage("Booking is not available for this event");
-            throw new BookingException("Booking is not available for this event");
+            queueEntry.setMessage("Rental not available for this vehicle");
+            throw new BookingException("Rental not available for this vehicle");
         }
 
         if (event.getAvailableSeats() < request.getQuantity()) {
@@ -113,10 +113,10 @@ public class BookingService {
 
         notificationService.sendNotification(userId, "USER",
                 "PAYMENT_PENDING", "Payment Pending",
-                "Your seats are reserved for " + event.getEventName() + ". Complete payment within 10 minutes. Ticket: " + ticketId,
+                "Your vehicle is reserved: " + event.getEventName() + ". Complete payment within 10 minutes. Booking ID: " + ticketId,
                 "/bookings/" + booking.getId());
-        auditService.record(userId, "USER", "BOOKING_RESERVED", "BOOKING",
-                String.valueOf(booking.getId()), "Payment pending reservation for event " + event.getId());
+        auditService.record(userId, "USER", "RENTAL_RESERVED", "BOOKING",
+                String.valueOf(booking.getId()), "Payment pending reservation for vehicle " + event.getId());
 
         log.info("Ticket reserved: {} for user {} event {}", ticketId, userId, event.getId());
         return toResponse(booking);
@@ -159,9 +159,9 @@ public class BookingService {
                 });
 
         notificationService.sendNotification(userId, "USER",
-                "REFUND_INITIATED", "Your cancellation request has been received successfully.",
-                "Refund Status: Refund Requested. Refunds generally take 3-7 working days depending on your payment provider.", "/bookings");
-        auditService.record(userId, "USER", "BOOKING_CANCELLED", "BOOKING",
+                "REFUND_INITIATED", "Rental Cancellation Confirmed",
+                "Your cancellation request has been received. Refund generally takes 3–7 working days.", "/bookings");
+        auditService.record(userId, "USER", "RENTAL_CANCELLED", "BOOKING",
                 String.valueOf(bookingId), "Cancellation reason: " + reason);
 
         return toResponse(booking);
@@ -177,8 +177,8 @@ public class BookingService {
         payment.setPaymentStatus(Payment.PaymentStatus.SUCCESSFUL);
         payment.setGatewayReference("GW-" + UUID.randomUUID().toString().substring(0, 12).toUpperCase());
         paymentRepository.save(payment);
-        notificationService.sendNotification(userId, "USER", "PAYMENT_SUCCESSFUL", "Payment successful",
-                "Your payment is complete and ticket is confirmed.", "/bookings/" + bookingId);
+        notificationService.sendNotification(userId, "USER", "PAYMENT_SUCCESSFUL", "Rental Payment Successful",
+                "Your payment is complete and vehicle rental is confirmed.", "/bookings/" + bookingId);
         emailService.sendBookingConfirmation(booking.getUser().getEmail(), booking.getUser().getName(), booking, booking.getEvent());
         auditService.record(userId, "USER", "PAYMENT_SUCCESSFUL", "PAYMENT",
                 String.valueOf(payment.getId()), "Payment completed for booking " + bookingId);
@@ -226,7 +226,7 @@ public class BookingService {
         return toResponse(booking);
     }
 
-    // ─── GET BY TICKET ID ─────────────────────────────────────────────────
+    // ─── GET BY BOOKING REFERENCE ─────────────────────────────────────────
 
     @Transactional(readOnly = true)
     public BookingResponse getByTicketId(String ticketId, Long userId) {
