@@ -175,12 +175,18 @@ public class EventService {
         switch (decision.toUpperCase()) {
             case "APPROVE" -> {
                 event.setStatus(Event.EventStatus.APPROVED);
+                event.setApprovedBy(adminId);
+                event.setApprovedAt(LocalDateTime.now());
+                event.setRejectedReason(null);
                 approval.setStatus(ApprovalRequest.ApprovalStatus.APPROVED);
                 notificationService.sendNotification(event.getOrganizer().getId(), "ORGANIZER", "VEHICLE_APPROVED",
                         "Listing approved", event.getEventName() + " has been approved. You can publish it now.", "/organizer/events");
             }
             case "REJECT" -> {
                 event.setStatus(Event.EventStatus.REJECTED);
+                event.setApprovedBy(null);
+                event.setApprovedAt(null);
+                event.setRejectedReason(reason);
                 approval.setStatus(ApprovalRequest.ApprovalStatus.REJECTED);
                 approval.setReviewNote(reason);
                 notificationService.sendNotification(event.getOrganizer().getId(), "ORGANIZER", "VEHICLE_REJECTED",
@@ -188,6 +194,9 @@ public class EventService {
             }
             case "REQUEST_MODIFICATIONS" -> {
                 event.setStatus(Event.EventStatus.REJECTED);
+                event.setApprovedBy(null);
+                event.setApprovedAt(null);
+                event.setRejectedReason(reason);
                 approval.setStatus(ApprovalRequest.ApprovalStatus.MODIFICATION_REQUESTED);
                 approval.setReviewNote(reason);
                 notificationService.sendNotification(event.getOrganizer().getId(), "ORGANIZER", "VEHICLE_MODIFICATION_REQUESTED",

@@ -103,6 +103,48 @@ public class AuthService {
     }
 
     @Transactional
+    public AuthResponse loginAdmin(LoginRequest request) {
+        String email = normalizeEmail(request.getEmail());
+
+        // Find user by email first — throw generic error so we don't reveal
+        // whether the account exists or not (security best practice)
+        User admin = userRepository.findByEmail(email)
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+
+        // Verify this account actually has ADMIN role
+        if (admin.getRole() != User.UserRole.ADMIN) {
+            log.warn("[Admin Login] Non-admin account tried to use admin login: {}", email);
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        if (admin.isAccountLocked()) {
+            throw new AccountLockedException("This account is locked. Please contact support.");
+        }
+
+        if (!passwordEncoder.matches(request.getPassword(), admin.getPasswordHash())) {
+            // Increment failed attempts
+            userRepository.incrementFailedAttempts(admin.getId());
+            long attempts = admin.getFailedLoginAttempts() + 1;
+            if (attempts >= 5) {
+                admin.setAccountLocked(true);
+                userRepository.save(admin);
+                throw new AccountLockedException("Account locked after too many failed attempts.");
+            }
+            throw new InvalidCredentialsException("Invalid email or password");
+        }
+
+        // Successful login — reset failed attempts and write audit log
+        userRepository.resetFailedAttempts(admin.getId());
+        auditService.record(admin.getId(), "ADMIN", "ADMIN_LOGIN", "ADMIN",
+                String.valueOf(admin.getId()), "Admin login successful");
+
+        log.info("[Admin Login] ✅ Admin authenticated: {}", email);
+
+        return buildAuthResponse(admin.getId(), admin.getEmail(), admin.getRole().name(),
+                admin.getName(), admin.getProfilePicture(), admin.isEmailVerified());
+    }
+
+    @Transactional
     public AuthResponse registerOrganizer(OrganizerRegisterRequest request) {
         String email = normalizeEmail(request.getEmail());
         request.setEmail(email);

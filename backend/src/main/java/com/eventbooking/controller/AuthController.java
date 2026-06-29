@@ -75,6 +75,12 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("Login successful", authService.loginOrganizer(request)));
     }
 
+    @PostMapping("/admin/login")
+    public ResponseEntity<ApiResponse<AuthResponse>> loginAdmin(
+            @Valid @RequestBody LoginRequest request) {
+        return ResponseEntity.ok(ApiResponse.success("Admin login successful", authService.loginAdmin(request)));
+    }
+
     // ── Email Verification ─────────────────────────────────────────────────
 
     @GetMapping("/verify-email")

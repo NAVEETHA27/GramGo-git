@@ -50,23 +50,12 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // ── Public ────────────────────────────────────────────
+                // ── Public — allow ALL OPTIONS preflight ──────────────
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(HttpMethod.POST,
-                    "/auth/user/register",
-                    "/auth/organizer/register",
-                    "/auth/user/login",
-                    "/auth/organizer/login",
-                    "/auth/forgot-password",
-                    "/auth/reset-password",
-                    "/auth/reset-password/otp",
-                    "/auth/refresh-token",
-                    "/auth/otp/send",
-                    "/auth/otp/verify"
-                ).permitAll()
+                // ── Public — entire /auth/** is open (login, register, OTP, etc.) ──
+                .requestMatchers("/auth/**").permitAll()
+                // ── Public GET endpoints ──────────────────────────────
                 .requestMatchers(HttpMethod.GET,
-                    "/auth/verify-email",
-                    "/auth/test-email",
                     "/events",
                     "/events/featured",
                     "/events/categories",
@@ -83,6 +72,7 @@ public class SecurityConfig {
                 .requestMatchers("/v1/**").permitAll()
                 // ── Fleet Owner only ──────────────────────────────────
                 .requestMatchers("/organizer/**").hasRole("ORGANIZER")
+                // ── Admin only ────────────────────────────────────────
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 // ── Authenticated ─────────────────────────────────────
                 .anyRequest().authenticated()

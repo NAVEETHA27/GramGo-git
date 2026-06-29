@@ -53,14 +53,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiResponse<Object>> handleUnauthorized(UnauthorizedException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+        // UnauthorizedException means "not authenticated / not allowed" → 401
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Object>> handleAccessDenied(AccessDeniedException ex) {
+        // AccessDeniedException from Spring Security means role check failed → 403
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ApiResponse.error("Unauthorized Access"));
+                .body(ApiResponse.error("Access denied: you do not have permission for this resource."));
     }
 
     @ExceptionHandler(BadCredentialsException.class)

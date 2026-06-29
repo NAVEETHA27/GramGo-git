@@ -150,6 +150,15 @@ public class Event {
     @Builder.Default
     private boolean featured = false;
 
+    @Column(name = "approved_by")
+    private Long approvedBy;
+
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
+
+    @Column(name = "rejected_reason", length = 500)
+    private String rejectedReason;
+
     // ── Extra ─────────────────────────────────────────────────────────────
     @Column(name = "tags", length = 400)
     private String tags;

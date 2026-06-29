@@ -41,6 +41,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+
+        // Skip JWT processing entirely for all auth endpoints.
+        // SecurityConfig already permits /auth/**, so no token needed here.
+        if (path.contains("/auth/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String token = resolveToken(request);
 
         if (StringUtils.hasText(token)) {
