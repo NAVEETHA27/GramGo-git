@@ -1,41 +1,77 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
 /**
- * Request flow (no CORS issues because proxy is server-side):
+ * Vite configuration for VehicleRent frontend.
  *
- *  Browser  →  Vite (localhost:3000)  →  Spring Boot (localhost:8080)
+ * ── Development (local) ──────────────────────────────────────────────
+ *   VITE_API_BASE_URL is NOT set  →  baseURL = '/api'
+ *   Requests go through the Vite dev-server proxy to localhost:8080.
+ *   Browser never talks directly to Spring Boot — no CORS needed locally.
  *
- *  Browser sends:  POST http://localhost:3000/api/auth/user/login
- *  Vite proxies:   POST http://localhost:8080/api/auth/user/login
- *  Spring sees:         /auth/user/login  (after stripping context-path /api)
+ * ── Production (Vercel) ─────────────────────────────────────────────
+ *   VITE_API_BASE_URL = https://your-backend.com
+ *   Axios baseURL becomes https://your-backend.com/api
+ *   Spring Boot CORS must allow the Vercel frontend origin.
  *
- *  The browser NEVER talks directly to port 8080,
- *  so CORS is irrelevant for proxied requests.
- *  The backend CORS config only matters for direct API consumers.
+ * Set in Vercel dashboard → Project → Settings → Environment Variables:
+ *   VITE_API_BASE_URL = https://your-backend.com
  */
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 3000,
-    strictPort: false,   // allow fallback to next port if 3000 is taken
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-        secure: false,
-        configure: (proxy) => {
-          proxy.on('error', (err) => {
-            console.error('[proxy error]', err.message);
-          });
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const apiTarget = (env.VITE_API_BASE_URL || 'http://localhost:8080')
+    .trim()
+    .replace(/\/+$/, '')
+    .replace(/\/api$/, '');
+
+  return {
+    plugins: [react()],
+
+    // Make all VITE_ env vars available via import.meta.env
+    define: {},
+
+    server: {
+      port: 3000,
+      strictPort: false,
+      // Dev proxy — only active during `vite dev`, never in production build
+      proxy: {
+        '/api': {
+          target: apiTarget,
+          changeOrigin: true,
+          secure: false,
+          configure: (proxy) => {
+            proxy.on('error', (err) => {
+              console.error('[vite proxy error]', err.message);
+            });
+          },
+        },
+        '/uploads': {
+          target: apiTarget,
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => '/api' + path,
         },
       },
-      '/uploads': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => '/api' + path,
+    },
+
+    build: {
+      outDir: 'dist',
+      sourcemap: false,
+      rollupOptions: {
+        output: {
+          // Code-split large vendor bundles for faster Vercel deploys
+          manualChunks: {
+            'vendor-react':    ['react', 'react-dom', 'react-router-dom'],
+            'vendor-query':    ['react-query'],
+            'vendor-motion':   ['framer-motion'],
+            'vendor-forms':    ['react-hook-form', '@hookform/resolvers', 'yup'],
+            'vendor-charts':   ['recharts'],
+            'vendor-leaflet':  ['leaflet', 'react-leaflet'],
+            'vendor-icons':    ['react-icons'],
+            'vendor-misc':     ['axios', 'date-fns', 'react-toastify', 'qrcode.react'],
+          },
+        },
       },
     },
-  },
+  };
 });

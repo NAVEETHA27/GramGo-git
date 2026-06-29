@@ -34,6 +34,13 @@ const orgSchema = yup.object({
   email:            yup.string().email('Invalid email').required('Email is required'),
   password:         yup.string().matches(PW, PW_MSG).required('Password is required'),
   phone:            yup.string().matches(/^[+]?[0-9]{7,15}$/, 'Invalid phone').nullable().optional(),
+  address:          yup.string().max(300).nullable().optional(),
+  pinCode:          yup.string().max(20).nullable().optional(),
+  city:             yup.string().max(100).nullable().optional(),
+  state:            yup.string().max(100).nullable().optional(),
+  country:          yup.string().max(100).nullable().optional(),
+  website:          yup.string().max(300).nullable().optional(),
+  description:      yup.string().max(1000).nullable().optional(),
 });
 
 /* ─── theme tokens (same as Login) ───────────────────────── */
@@ -191,20 +198,56 @@ export default function Register() {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const fn      = isOrg ? authAPI.organizerRegister : authAPI.userRegister;
-      const res     = await fn(data);
-      const payload = res.data?.data;
-      if (!payload?.user?.email) throw new Error('Invalid response');
+      let payload;
+
+      if (isOrg) {
+        // Build exact payload the backend OrganizerRegisterRequest expects
+        payload = {
+          organizerName:    data.organizerName || data.name || '',
+          organizationName: data.organizationName || '',
+          email:            data.email || '',
+          password:         data.password || '',
+          phone:            data.phone   || '',
+          address:          data.address || '',
+          pinCode:          data.pinCode || '',
+          city:             data.city    || '',
+          state:            data.state   || '',
+          country:          data.country || '',
+          website:          data.website     || '',
+          description:      data.description || '',
+        };
+      } else {
+        // Build exact payload the backend UserRegisterRequest expects
+        payload = {
+          name:             data.name    || '',
+          email:            data.email   || '',
+          password:         data.password || '',
+          phone:            data.phone   || '',
+          address:          data.address || '',
+          pinCode:          data.pinCode || '',
+          city:             data.city    || '',
+          state:            data.state   || '',
+          country:          data.country || '',
+          organizationName: data.organizationName || '',
+          dateOfBirth:      data.dateOfBirth || null,
+          gender:           data.gender  || '',
+        };
+      }
+
+      const fn  = isOrg ? authAPI.organizerRegister : authAPI.userRegister;
+      const res = await fn(payload);
+      const responsePayload = res.data?.data;
+      if (!responsePayload?.user?.email) throw new Error('Invalid response');
 
       /* Store pending auth — login completes after OTP verification */
-      const dest = '/login';
+      const dest    = '/login';
       const otpPath = isOrg ? '/verify-otp/organizer' : '/verify-otp/user';
-      const devOtpParam = payload.devOtp ? `&devOtp=${encodeURIComponent(payload.devOtp)}` : '';
-      if (payload.devOtp) {
-        toast.info(`Email is not configured. Use OTP ${payload.devOtp} to verify this account.`, { autoClose: 10000 });
+      const devOtpParam = responsePayload.devOtp ? `&devOtp=${encodeURIComponent(responsePayload.devOtp)}` : '';
+      if (responsePayload.devOtp) {
+        toast.info(`Email is not configured. Use OTP ${responsePayload.devOtp} to verify this account.`, { autoClose: 10000 });
       }
       navigate(
-        `${otpPath}?email=${encodeURIComponent(payload.user.email)}&mode=register&redirect=${encodeURIComponent(dest)}&sent=1${devOtpParam}`,
+        `${otpPath}?email=${encodeURIComponent(responsePayload.user.email)}&mode=register&redirect=${encodeURIComponent(dest)}&sent=1${devOtpParam}`,
         { replace: true },
       );
     } catch (err) {
@@ -414,6 +457,50 @@ export default function Register() {
                       style={inputStyle(!!errors.phone)}
                       onFocus={onFocus} onBlur={e => onBlur(e, !!errors.phone)} />
                   </Field>
+
+                  {/* ── Organizer-only fields required by backend ── */}
+                  {isOrg && (<>
+                    <Field label="Address" icon={<FiMapPin/>} error={errors.address?.message} accent={t.accent}>
+                      <input {...register('address')} placeholder="Office / business address"
+                        style={inputStyle(!!errors.address)}
+                        onFocus={onFocus} onBlur={e => onBlur(e, !!errors.address)} />
+                    </Field>
+
+                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
+                      <Field label="City" error={errors.city?.message} accent={t.accent}>
+                        <input {...register('city')} placeholder="City"
+                          style={{...inputStyle(!!errors.city), paddingLeft:'1rem'}}
+                          onFocus={onFocus} onBlur={e => onBlur(e, !!errors.city)} />
+                      </Field>
+                      <Field label="State" error={errors.state?.message} accent={t.accent}>
+                        <input {...register('state')} placeholder="State"
+                          style={{...inputStyle(!!errors.state), paddingLeft:'1rem'}}
+                          onFocus={onFocus} onBlur={e => onBlur(e, !!errors.state)} />
+                      </Field>
+                      <Field label="Country" error={errors.country?.message} accent={t.accent}>
+                        <input {...register('country')} placeholder="Country"
+                          style={{...inputStyle(!!errors.country), paddingLeft:'1rem'}}
+                          onFocus={onFocus} onBlur={e => onBlur(e, !!errors.country)} />
+                      </Field>
+                      <Field label="PIN Code" error={errors.pinCode?.message} accent={t.accent}>
+                        <input {...register('pinCode')} placeholder="PIN code"
+                          style={{...inputStyle(!!errors.pinCode), paddingLeft:'1rem'}}
+                          onFocus={onFocus} onBlur={e => onBlur(e, !!errors.pinCode)} />
+                      </Field>
+                    </div>
+
+                    <Field label="Website (optional)" icon={<FiMapPin/>} error={errors.website?.message} accent={t.accent}>
+                      <input {...register('website')} placeholder="https://yourfleet.com" type="url"
+                        style={inputStyle(!!errors.website)}
+                        onFocus={onFocus} onBlur={e => onBlur(e, !!errors.website)} />
+                    </Field>
+
+                    <Field label="Description (optional)" error={errors.description?.message} accent={t.accent}>
+                      <textarea {...register('description')} placeholder="Tell renters about your fleet and services…" rows={3}
+                        style={{...inputStyle(!!errors.description), paddingLeft:'1rem', paddingTop:'0.75rem', resize:'none'}}
+                        onFocus={onFocus} onBlur={e => onBlur(e, !!errors.description)} />
+                    </Field>
+                  </>)}
 
                   {!isOrg && (
                     <Field label="Company / Organization (optional)" icon={<FiUser/>} error={errors.organizationName?.message} accent={t.accent}>

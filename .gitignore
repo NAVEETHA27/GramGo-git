@@ -1,32 +1,30 @@
-# Build
-/target/
-/out/
+# ─── Backend ─────────────────────────────────────────────────────────
+backend/target/
+backend/out/
+backend/logs/
+backend/uploads/
 
-# Dependencies
+# ─── Frontend ─────────────────────────────────────────────────────────
 frontend/node_modules/
-
-# Build output
 frontend/dist/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
 
-# Local uploads & logs
-uploads/
-logs/
-
-# Environment & secrets
+# ─── Environment & secrets — NEVER commit ────────────────────────────
+backend/.env
+backend/.env.local
 .env
 .env.local
 *.env
 
-# IDE
+# ─── IDE & OS ─────────────────────────────────────────────────────────
 .idea/
 *.iml
-.vscode/
 *.swp
 *.swo
-
-# OS
 .DS_Store
 Thumbs.db
 
-# Maven wrapper logs
-.mvn/wrapper/maven-wrapper.jar
+# ─── Maven ───────────────────────────────────────────────────────────
+backend/.mvn/wrapper/maven-wrapper.jar

@@ -1,8 +1,13 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+const rawApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+const apiBaseUrl = rawApiBaseUrl?.replace(/\/+$/, '').replace(/\/api$/, '');
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  // Development: VITE_API_BASE_URL is unset → baseURL = '/api' → Vite proxy forwards to localhost:8080
+  // Production:  VITE_API_BASE_URL = 'https://your-backend.com' → baseURL = 'https://your-backend.com/api'
+  baseURL: apiBaseUrl ? `${apiBaseUrl}/api` : '/api',
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });

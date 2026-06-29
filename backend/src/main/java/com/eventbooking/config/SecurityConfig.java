@@ -1,6 +1,7 @@
 package com.eventbooking.config;
 
 import com.eventbooking.security.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -24,8 +26,18 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    /* Explicit constructor — no Lombok needed, avoids blank-final-field compile error */
     private final JwtAuthenticationFilter jwtAuthFilter;
+
+    /**
+     * Comma-separated list of allowed frontend origins injected from application.yml.
+     * Examples:
+     *   Local dev:   http://localhost:3000
+     *   Vercel:      https://vehicle-rent.vercel.app,https://yourdomain.com
+     * Set via:  app.cors.allowed-origins in application.yml  OR
+     *           CORS_ALLOWED_ORIGINS environment variable
+     */
+    @Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:5173}")
+    private String allowedOrigins;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
@@ -69,10 +81,10 @@ public class SecurityConfig {
                 .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/v1/**").permitAll()
-                // ── Organizer only ─────────────────────────────────────
+                // ── Fleet Owner only ──────────────────────────────────
                 .requestMatchers("/organizer/**").hasRole("ORGANIZER")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                // ── Authenticated ──────────────────────────────────────
+                // ── Authenticated ─────────────────────────────────────
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -88,9 +100,22 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
+
+        // Parse comma-separated origins from config
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+
+        // In development, a single wildcard pattern is fine.
+        // In production, list explicit Vercel URLs so credentials work correctly.
+        config.setAllowedOrigins(origins);
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of(
+                "Authorization", "Content-Type", "Accept",
+                "X-Requested-With", "Cache-Control"
+        ));
         config.setExposedHeaders(List.of("Authorization"));
         config.setAllowCredentials(false);
         config.setMaxAge(3600L);
