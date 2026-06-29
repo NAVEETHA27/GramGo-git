@@ -82,9 +82,12 @@ api.interceptors.response.use(
       (typeof data === 'string' ? data : null) ||
       'An unexpected error occurred';
 
-    const isAuthEndpoint = (config?.url ?? '').includes('/auth/');
-    const isOtpEndpoint  = (config?.url ?? '').includes('/auth/otp/');
-    if (status !== 404 && !(status === 401 && isAuthEndpoint) && !isOtpEndpoint) {
+    const isAuthEndpoint   = (config?.url ?? '').includes('/auth/');
+    const isOtpEndpoint    = (config?.url ?? '').includes('/auth/otp/');
+    const isAdminLogin     = (config?.url ?? '').includes('/auth/admin/login');
+
+    // Never auto-toast for auth endpoints — let components handle their own errors
+    if (status !== 404 && !(status === 401 && isAuthEndpoint) && !isOtpEndpoint && !isAdminLogin) {
       toast.error(msg);
     }
 
