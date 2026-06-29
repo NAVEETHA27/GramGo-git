@@ -27,8 +27,7 @@ import CreateVehicle from './pages/organizer/CreateVehicle';
 import EditVehicle from './pages/organizer/EditVehicle';
 import Attendees from './pages/organizer/Attendees';
 import OrganizerProfile from './pages/organizer/Profile';
-import AdminDashboard from './pages/admin/Dashboard';
-import AdminApprovals from './pages/admin/Approvals';
+import AdminPortal from './pages/admin/AdminPortal';
 
 function LoadingScreen() {
   return (
@@ -75,6 +74,9 @@ function GuestRoute({ children }) {
 export default function App() {
   return (
     <Routes>
+      <Route path="/admin" element={<AdminPortal />} />
+      <Route path="/admin/*" element={<AdminPortal />} />
+
       <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
       <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
       <Route path="/verify-otp/user" element={<OtpVerify defaultRole="user" />} />
@@ -107,10 +109,6 @@ export default function App() {
         <Route path="/organizer/attendees" element={<ProtectedRoute roles={['ORGANIZER']}><Attendees /></ProtectedRoute>} />
         <Route path="/organizer/profile" element={<ProtectedRoute roles={['ORGANIZER']}><OrganizerProfile /></ProtectedRoute>} />
         <Route path="/organizer/*" element={<ProtectedRoute roles={['ORGANIZER']}><OrganizerDashboard /></ProtectedRoute>} />
-
-        <Route path="/admin/dashboard" element={<ProtectedRoute roles={['ADMIN']}><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/approvals" element={<ProtectedRoute roles={['ADMIN']}><AdminApprovals /></ProtectedRoute>} />
-        <Route path="/admin/*" element={<ProtectedRoute roles={['ADMIN']}><AdminDashboard /></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Route>

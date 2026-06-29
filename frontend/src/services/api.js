@@ -12,6 +12,20 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+api.interceptors.request.use((config) => {
+  const url = config.url ?? '';
+  const token = url.startsWith('/admin')
+    ? localStorage.getItem('eb_admin_token')
+    : localStorage.getItem('eb_token');
+
+  if (token) {
+    config.headers = config.headers ?? {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
 // ── Response interceptor ─────────────────────────────────────────────
 api.interceptors.response.use(
   (res) => res,
@@ -53,7 +67,8 @@ api.interceptors.response.use(
 
     if (status === 401 && !config._retry) {
       const isAuthRoute = (config?.url ?? '').includes('/auth/');
-      if (!isAuthRoute && !window.location.pathname.includes('/login')) {
+      const isAdminRoute = window.location.pathname.startsWith('/admin');
+      if (!isAuthRoute && !isAdminRoute && !window.location.pathname.includes('/login')) {
         localStorage.removeItem('eb_token');
         localStorage.removeItem('eb_refresh_token');
         localStorage.removeItem('eb_user');
@@ -83,6 +98,7 @@ export const authAPI = {
   userLogin:           (d)            => api.post('/auth/user/login', d),
   organizerRegister:   (d)            => api.post('/auth/organizer/register', d),
   organizerLogin:      (d)            => api.post('/auth/organizer/login', d),
+  adminLogin:          (d)            => api.post('/auth/admin/login', d),
   verifyEmail:         (token, role)  => api.get(`/auth/verify-email?token=${token}&role=${role}`),
   forgotPassword:      (d)            => api.post('/auth/forgot-password', d),
   resetPassword:       (d)            => api.post('/auth/reset-password', d),
@@ -149,13 +165,20 @@ export const adminAPI = {
   dashboard:         ()           => api.get('/admin/dashboard'),
   approvals:         (p)          => api.get('/admin/approvals', { params: p }),
   reviewEvent:       (eventId, d) => api.post(`/admin/events/${eventId}/review`, d),
+  approveVehicle:    (eventId)    => api.put(`/admin/vehicles/${eventId}/approve`),
+  rejectVehicle:     (eventId, d) => api.put(`/admin/vehicles/${eventId}/reject`, d),
   users:             (p)          => api.get('/admin/users', { params: p }),
+  renters:           (p)          => api.get('/admin/renters', { params: p }),
   organizers:        (p)          => api.get('/admin/organizers', { params: p }),
+  vehicles:          (p)          => api.get('/admin/vehicles', { params: p }),
+  pendingVehicles:   (p)          => api.get('/admin/vehicles/pending', { params: p }),
   events:            (p)          => api.get('/admin/events', { params: p }),
+  bookings:          (p)          => api.get('/admin/bookings', { params: p }),
   payments:          (p)          => api.get('/admin/payments', { params: p }),
   refunds:           (p)          => api.get('/admin/refunds', { params: p }),
   updateRefundStatus:(id, d)      => api.patch(`/admin/refunds/${id}/status`, d),
   auditLogs:         (p)          => api.get('/admin/audit-logs', { params: p }),
+  activity:          (p)          => api.get('/admin/activity', { params: p }),
 };
 
 // ── User ─────────────────────────────────────────────────────────────
